@@ -1,4 +1,4 @@
-(defproject wordcount "0.0.1-SNAPSHOT"
+(defproject pipeline "0.0.1-SNAPSHOT"
   :source-paths ["topologies"]
   :resource-paths ["_resources"]
   :target-path "_build"
