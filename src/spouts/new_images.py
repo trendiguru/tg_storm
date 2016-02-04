@@ -5,16 +5,16 @@ from streamparse.spout import Spout
 import rq
 from trendi.constants import redis_conn
 
-class FailedImageSpout(Spout):
+
+class NewImageSpout(Spout):
 
     def initialize(self, stormconf, context):
         rq.push_connection(redis_conn)
-        self.q = rq.registry.FailedQueue()
+        self.q = rq.Queue("start_pipeline")
 
     def next_tuple(self):
         job = self.q.dequeue()
-	if not job: 
-            return
-        image_url = job.args[0]
-        origin = job.origin
-        self.emit([image_url, origin])
+        if not job:
+                return
+        page_url, image_url = job.args  # TODO - make sure wer'e sending only 2 args
+        self.emit([page_url, image_url])
