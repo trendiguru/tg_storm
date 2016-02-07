@@ -38,7 +38,7 @@ class PersonBolt(Bolt):
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
                 item_args = {'mask': item_mask, 'category': category, 'image': image}
                 self.emit([item_args, person['_id']], stream='item_args')
-                self.emit([person, person['_id'], image_id], stream='person_obj')
+        self.emit([person, person['_id'], image_id], stream='person_obj')
 
 
 class MergeItems(Bolt):
