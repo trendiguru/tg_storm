@@ -22,6 +22,7 @@
           :p 1
           )
 
+    (comment
     "person-bolt" (python-bolt-spec
           options
           {["image-bolt" "person_args"] :shuffle}
@@ -56,6 +57,7 @@
           []
           :p 1
           )
+      )
     }
   ]
 )
