@@ -16,4 +16,5 @@ class NewImageSpout(Spout):
         if not job:
                 return
         page_url, image_url, lang = job.args  # TODO - cancel the lang..
-        self.emit([page_url, image_url])
+        self.log("spouts page_url: {0}, image_url: {1}".format(page_url, image_url))
+        # self.emit([page_url, image_url])
