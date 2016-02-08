@@ -18,8 +18,7 @@ class PersonBolt(Bolt):
         self.db = constants.db
 
     def process(self, tup):
-        image_id, image_url = tup[1:]
-        person = tup[0]
+        person, image_id, image_url = tup
         person['_id'] = bson.ObjectId()
         person['items'] = []
         image = background_removal.person_isolation(Utils.get_cv2_img_array(image_url), person['face'])

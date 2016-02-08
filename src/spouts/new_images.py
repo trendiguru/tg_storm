@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
-import itertools
 from streamparse.spout import Spout
 import rq
 from trendi.constants import redis_conn
@@ -16,5 +15,5 @@ class NewImageSpout(Spout):
         job = self.q.dequeue()
         if not job:
                 return
-        page_url, image_url = job.args  # TODO - make sure wer'e sending only 2 args
+        page_url, image_url, lang = job.args  # TODO - cancel the lang..
         self.emit([page_url, image_url])
