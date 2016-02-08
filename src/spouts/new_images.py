@@ -9,7 +9,7 @@ class NewImageSpout(Spout):
 
     def initialize(self, stormconf, context):
         rq.push_connection(redis_conn)
-        self.q = rq.Queue("start_pipeline")
+        self.q = rq.Queue("storm_pipeline")
 
     def next_tuple(self):
         job = self.q.dequeue()
