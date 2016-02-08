@@ -40,8 +40,8 @@
     }
     {"merge-items-bolt" (python-bolt-spec
           options
-          {"item-bolt" ["person_id"]}
-           ["person_bolt" "person_obj"] ["person_id"]}
+          {"item-bolt" ["person_id"]
+           ["person-bolt" "person_obj"] ["person_id"]}
           "bolts.person.MergeItems"
           ["person", "image_id"]
           :p 1

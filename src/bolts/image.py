@@ -16,9 +16,11 @@ class NewImageBolt(Bolt):
 
     def process(self, tup):
         page_url, image_url = tup.values
+        # check if page domain is in our white-list
         if not tldextract.extract(page_url).registered_domain(page_url) in whitelist.all_white_lists:
             return
-
+        # check if image is already in some collection in our db
+        # I'm not sure we need to check if it in db.images, I think we check it in page_results.py
         images_by_url = db.images.find_one({"image_urls": image_url})
         if images_by_url:
             return
@@ -32,11 +34,11 @@ class NewImageBolt(Bolt):
                                                            {'$addToSet': {'image_urls': image_url}})
         if images_obj_hash:
             return
-
+        # check if image is valid
         image = Utils.get_cv2_img_array(image_url)
         if image is None:
             raise IOError("'get_cv2_img_array' has failed. Bad image!")
-
+        # get faces and relevancy
         relevance = background_removal.image_is_relevant(image, use_caffe=False, image_url=image_url)
         image_dict = {'image_urls': [image_url], 'relevant': relevance.is_relevant, 'views': 1,
                       'saved_date': datetime.datetime.utcnow(), 'image_hash': image_hash, 'page_urls': [page_url],
@@ -51,8 +53,12 @@ class NewImageBolt(Bolt):
                 person_args = {'face': face.tolist(), 'person_bb': person_bb}
                 self.emit([person_args, image_dict['image_id'], image_url], stream='person_args')
                 idx += 1
+                # emit to the person-bolt
                 self.log('{idx} people from {url} has been emitted'.format(idx=idx, url=image_url))
-            self.emit([image_dict, image_dict['image_id']], stream='image_obj')
+            # let's send the merger the number of people it should expect to
+            image_dict['num_of_people'] = idx
+            # emit to the merge-people bolt
+            self.emit([image_dict, image_dict['id']], stream='image_obj')
         else:
             db.irrelevant_images.insert_one(image_dict)
             self.log('{url} stored as irrelevant'.format(url=image_url))
@@ -62,9 +68,18 @@ class MergePeople(Bolt):
 
     def initialize(self, conf, ctx):
         self.db = db
+        self.bucket = {}
 
     def process(self, tup):
-        origin = tup.values[1]
-        self.counts[origin] += 1
-        self.emit([origin, self.counts[origin]])
-        self.log('%s: %d' % (origin, self.counts[origin]))
+        if tup.stream == "image_obj":
+            image_dict, image_id = tup.values
+            self.bucket[image_id] = {'person_stack': 0, 'image_obj': image_dict}
+        else:
+            person, image_id = tup.values
+            self.bucket[image_id]['image_obj']['people'].append(person)
+            self.bucket[image_id]['person_stack'] += 1
+            if self.bucket[image_id]['stack'] == self.bucket[image_id]['image_obj']['num_of_people']:
+                insert_result = db.images.insert_one(self.bucket[image_id]['image_obj'])
+                del self.bucket[image_id]
+                if not insert_result.acknowledged:
+                    self.log("Insert failed")

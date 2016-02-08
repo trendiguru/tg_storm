@@ -1,15 +1,18 @@
-
 from __future__ import absolute_import, print_function, unicode_literals
 from streamparse.bolt import Bolt
-import time
+from streamparse import Tuple
 import bson
 import numpy as np
-
+import time
 from trendi import whitelist, page_results, Utils, background_removal, pipeline, constants
 from trendi.paperdoll import paperdoll_parse_enqueue
 
 
 class PersonBolt(Bolt):
+
+    def fail(self, tup):
+        tup_id = tup.id if isinstance(tup, Tuple) else tup
+        self.send_message({'command': 'ack', 'id': tup_id})
 
     def initialize(self, conf, ctx):
         self.db = constants.db
@@ -18,6 +21,7 @@ class PersonBolt(Bolt):
         image_id, image_url = tup[1:]
         person = tup[0]
         person['_id'] = bson.ObjectId()
+        person['items'] = []
         image = background_removal.person_isolation(Utils.get_cv2_img_array(image_url), person['face'])
         # TODO - serialize image obj or .tolist() it
         start_time = time.time()
@@ -32,22 +36,31 @@ class PersonBolt(Bolt):
             raise SystemError("Paperdoll has returned empty results ({0} elapsed,timeout={1} )!".format(elapsed,paper_job.timeout))
         mask, labels = paper_job.result[:2]
         final_mask = pipeline.after_pd_conclusions(mask, labels)
+        idx = 0
         for num in np.unique(final_mask):
             category = list(labels.keys())[list(labels.values()).index(num)]
             if category in constants.paperdoll_shopstyle_women.keys():
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
                 item_args = {'mask': item_mask, 'category': category, 'image': image}
                 self.emit([item_args, person['_id']], stream='item_args')
+                idx += 1
+        person['num_of_items'] = idx
         self.emit([person, person['_id'], image_id], stream='person_obj')
 
 
 class MergeItems(Bolt):
 
     def initialize(self, conf, ctx):
-        self.db = constants.db
+        self.bucket = {}
 
     def process(self, tup):
-        origin = tup.values[1]
-        self.counts[origin] += 1
-        self.emit([origin, self.counts[origin]])
-        self.log('%s: %d' % (origin, self.counts[origin]))
+        if tup.stream == "person_obj":
+            person_obj, person_id, image_id = tup.values
+            self.bucket[person_id] = {'image_id': image_id, 'item_stack': 0, 'person_obj': person_obj}
+        else:
+            item, person_id = tup.values
+            self.bucket[person_id]['person_obj']['items'].append(item)
+            self.bucket[person_id]['item_stack'] += 1
+            if self.bucket[person_id]['item_stack'] == self.bucket[person_id]['person_obj']['num_of_items']:
+                self.emit([self.bucket[person_id]['person_obj'], self.bucket[person_id]['image_id']])
+                del self.bucket[person_id]
