@@ -21,7 +21,7 @@
            "image_obj" ["image_obj", "image_id"]}
           :p 1
           )
-
+    }
     (comment
     "person-bolt" (python-bolt-spec
           options
@@ -57,7 +57,6 @@
           []
           :p 1
           )
-      )
-    }
+    )
   ]
 )
