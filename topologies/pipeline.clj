@@ -12,7 +12,8 @@
           )
     }
     ;; bolt configuration
-    {"image-bolt" (python-bolt-spec
+    {
+    "image-bolt" (python-bolt-spec
           options
           {"image-spout" :shuffle}
           "bolts.image.NewImageBolt"
@@ -20,8 +21,8 @@
            "image_obj" ["image_obj", "image_id"]}
           :p 1
           )
-    }
-    {"person-bolt" (python-bolt-spec
+
+    "person-bolt" (python-bolt-spec
           options
           {["image-bolt" "person_args"] :shuffle}
           "bolts.person.PersonBolt"
@@ -29,16 +30,16 @@
            "person_obj" ["person_obj", "person_id", "image_id"]}
           :p 3
           )
-    }
-    {"item-bolt" (python-bolt-spec
+
+    "item-bolt" (python-bolt-spec
           options
           {["person-bolt" "item_args"] :shuffle}
           "bolts.item.ItemBolt"
           ["item", "person_id"]
           :p 3
           )
-    }
-    {"merge-items-bolt" (python-bolt-spec
+
+    "merge-items-bolt" (python-bolt-spec
           options
           {"item-bolt" ["person_id"]
            ["person-bolt" "person_obj"] ["person_id"]}
@@ -46,8 +47,8 @@
           ["person", "image_id"]
           :p 1
           )
-    }
-    {"merge-people-bolt" (python-bolt-spec
+
+    "merge-people-bolt" (python-bolt-spec
           options
           {"merge-items-bolt" ["image_id"]
            ["image-bolt" "image_obj"] ["image_id"]}
