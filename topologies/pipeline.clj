@@ -29,7 +29,7 @@
           "bolts.person.PersonBolt"
           {"item args" ["item_args", "person_id"]
            "person_obj" ["person_obj", "person_id", "image_id"]}
-          :p 3
+          :p 1
           )
 
     "item-bolt" (python-bolt-spec
@@ -37,7 +37,7 @@
           {["person-bolt" "item_args"] :shuffle}
           "bolts.item.ItemBolt"
           ["item", "person_id"]
-          :p 3
+          :p 1
           )
 
     "merge-items-bolt" (python-bolt-spec
