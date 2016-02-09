@@ -45,11 +45,12 @@ class PersonBolt(Bolt):
             if category in constants.paperdoll_shopstyle_women.keys():
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
                 item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist()}
-                self.emit([item_args, person['_id']], stream='item_args')
+                # self.emit([item_args, person['_id']], stream='item_args')
+                self.emit([item_args, person['_id']])
                 self.log("emits the {0}".format(category))
                 idx += 1
         person['num_of_items'] = idx
-        self.emit([person, person['_id'], image_id], stream='person_obj')
+        # self.emit([person, person['_id'], image_id], stream='person_obj')
 
 
 class MergeItems(Bolt):

@@ -26,14 +26,16 @@
           options
           {["image-bolt" "person_args"] :shuffle}
           "bolts.person.PersonBolt"
-          {"item args" ["item_args", "person_id"]
-           "person_obj" ["person_obj", "person_id", "image_id"]}
+          ["item_args", "person_id"]
+          ;; ["item args" ["item_args", "person_id"]]
+          ;; "person_obj" ["person_obj", "person_id", "image_id"]}
           :p 1
           )
 
     "item-bolt" (python-bolt-spec
           options
-          {["person-bolt" "item_args"] :shuffle}
+          ;; {["person-bolt" "item_args"] :shuffle}
+          {"person-bolt" :shuffle}
           "bolts.item.ItemBolt"
           ["item", "person_id"]
           :p 1
