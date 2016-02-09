@@ -17,7 +17,7 @@ class NewImageBolt(Bolt):
     def process(self, tup):
         page_url, image_url = tup.values
         # check if page domain is in our white-list
-        if not tldextract.extract(page_url).registered_domain(page_url) in whitelist.all_white_lists:
+        if not tldextract.extract(page_url).registered_domain in whitelist.all_white_lists:
             return
         # check if image is already in some collection in our db
         # I'm not sure we need to check if it in db.images, I think we check it in page_results.py
