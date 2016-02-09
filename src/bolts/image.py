@@ -58,7 +58,7 @@ class NewImageBolt(Bolt):
             # let's send the merger the number of people it should expect to
             image_dict['num_of_people'] = idx
             # emit to the merge-people bolt
-            self.log("gonna emit {0} as image_id".format(image_dict['_id']))
+            self.log("gonna emit {0} as image_id".format(image_dict['image_id']))
             # self.emit([image_dict, image_dict['id']], stream='image_obj')
         else:
             # db.irrelevant_images.insert_one(image_dict)
