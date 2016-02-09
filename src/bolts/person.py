@@ -44,7 +44,7 @@ class PersonBolt(Bolt):
             category = list(labels.keys())[list(labels.values()).index(num)]
             if category in constants.paperdoll_shopstyle_women.keys():
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
-                item_args = {'mask': item_mask, 'category': category, 'image': image}
+                item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist()}
                 self.emit([item_args, person['_id']], stream='item_args')
                 self.log("emits the {0}".format(category))
                 idx += 1

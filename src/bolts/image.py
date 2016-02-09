@@ -41,7 +41,7 @@ class NewImageBolt(Bolt):
         # get faces and relevancy
         relevance = background_removal.image_is_relevant(image, use_caffe=False, image_url=image_url)
         image_dict = {'image_urls': [image_url], 'relevant': relevance.is_relevant, 'views': 1,
-                      'saved_date': datetime.datetime.utcnow(), 'image_hash': image_hash, 'page_urls': [page_url],
+                      'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
                       'people': [], 'image_id': str(bson.ObjectId())}
         if relevance.is_relevant:
             # There are faces
