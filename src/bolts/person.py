@@ -18,13 +18,17 @@ class PersonBolt(Bolt):
         self.db = constants.db
 
     def process(self, tup):
+        self.log("got into person-bolt! :)")
         person, image_id, image_url = tup
-        person['_id'] = bson.ObjectId()
+        person['_id'] = str(bson.ObjectId())
         person['items'] = []
         image = background_removal.person_isolation(Utils.get_cv2_img_array(image_url), person['face'])
         # TODO - serialize image obj or .tolist() it
         start_time = time.time()
+        self.log("sending to Herr paperdoll")
+        start = time.time()
         paper_job = paperdoll_parse_enqueue.paperdoll_enqueue(image, str(person['_id']))
+        self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
         while not paper_job.is_finished or paper_job.is_failed:
             time.sleep(0.5)
         if paper_job.is_failed:
@@ -41,10 +45,11 @@ class PersonBolt(Bolt):
             if category in constants.paperdoll_shopstyle_women.keys():
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
                 item_args = {'mask': item_mask, 'category': category, 'image': image}
-                self.emit([item_args, person['_id']], stream='item_args')
+                # self.emit([item_args, person['_id']], stream='item_args')
+                self.log("gonna emit the {0}".format(category))
                 idx += 1
         person['num_of_items'] = idx
-        self.emit([person, person['_id'], image_id], stream='person_obj')
+        # self.emit([person, person['_id'], image_id], stream='person_obj')
 
 
 class MergeItems(Bolt):

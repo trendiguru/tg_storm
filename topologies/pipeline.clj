@@ -21,8 +21,7 @@
            "image_obj" ["image_obj", "image_id"]}
           :p 1
           )
-    }
-    (comment
+
     "person-bolt" (python-bolt-spec
           options
           {["image-bolt" "person_args"] :shuffle}
@@ -31,7 +30,8 @@
            "person_obj" ["person_obj", "person_id", "image_id"]}
           :p 1
           )
-
+    }
+    (comment
     "item-bolt" (python-bolt-spec
           options
           {["person-bolt" "item_args"] :shuffle}

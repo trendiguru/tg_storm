@@ -42,7 +42,7 @@ class NewImageBolt(Bolt):
         relevance = background_removal.image_is_relevant(image, use_caffe=False, image_url=image_url)
         image_dict = {'image_urls': [image_url], 'relevant': relevance.is_relevant, 'views': 1,
                       'saved_date': datetime.datetime.utcnow(), 'image_hash': image_hash, 'page_urls': [page_url],
-                      'people': [], 'image_id': bson.ObjectId()}
+                      'people': [], 'image_id': str(bson.ObjectId())}
         if relevance.is_relevant:
             # There are faces
             idx = 0
@@ -51,14 +51,14 @@ class NewImageBolt(Bolt):
                 person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
                              min(image.shape[0], 8 * h)]
                 person_args = {'face': face.tolist(), 'person_bb': person_bb}
-                # self.emit([person_args, image_dict['image_id'], image_url], stream='person_args')
                 idx += 1
                 # emit to the person-bolt
+                self.emit([person_args, image_dict['image_id'], image_url], stream='person_args')
                 self.log('{idx} people from {url} has been emitted'.format(idx=idx, url=image_url))
             # let's send the merger the number of people it should expect to
             image_dict['num_of_people'] = idx
             # emit to the merge-people bolt
-            self.log("gonna emit {0} as image_id".format(image_dict['image_id']))
+            # self.log("gonna emit {0} as image_id".format(image_dict['image_id']))
             # self.emit([image_dict, image_dict['id']], stream='image_obj')
         else:
             # db.irrelevant_images.insert_one(image_dict)
