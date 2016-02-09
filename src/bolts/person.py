@@ -28,9 +28,9 @@ class PersonBolt(Bolt):
         self.log("sending to Herr paperdoll")
         start = time.time()
         paper_job = paperdoll_parse_enqueue.paperdoll_enqueue(image, str(person['_id']))
-        self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
         while not paper_job.is_finished or paper_job.is_failed:
             time.sleep(0.5)
+        self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
         if paper_job.is_failed:
             raise SystemError("Paper-job has failed!")
             # TODO - update someone that we got a man down !
