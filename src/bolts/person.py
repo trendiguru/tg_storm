@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from streamparse.bolt import Bolt
-from streamparse import Tuple
+# from streamparse import Tuple
 import bson
 import numpy as np
 import time
@@ -10,9 +10,9 @@ from trendi.paperdoll import paperdoll_parse_enqueue
 
 class PersonBolt(Bolt):
 
-    def fail(self, tup):
-        tup_id = tup.id if isinstance(tup, Tuple) else tup
-        self.send_message({'command': 'ack', 'id': tup_id})
+    # def fail(self, tup):
+    #     tup_id = tup.id if isinstance(tup, Tuple) else tup
+    #     self.send_message({'command': 'ack', 'id': tup_id})
 
     def initialize(self, conf, ctx):
         self.db = constants.db
