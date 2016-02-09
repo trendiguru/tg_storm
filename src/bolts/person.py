@@ -45,11 +45,11 @@ class PersonBolt(Bolt):
             if category in constants.paperdoll_shopstyle_women.keys():
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
                 item_args = {'mask': item_mask, 'category': category, 'image': image}
-                # self.emit([item_args, person['_id']], stream='item_args')
-                self.log("gonna emit the {0}".format(category))
+                self.emit([item_args, person['_id']], stream='item_args')
+                self.log("emits the {0}".format(category))
                 idx += 1
         person['num_of_items'] = idx
-        # self.emit([person, person['_id'], image_id], stream='person_obj')
+        self.emit([person, person['_id'], image_id], stream='person_obj')
 
 
 class MergeItems(Bolt):
@@ -59,12 +59,18 @@ class MergeItems(Bolt):
 
     def process(self, tup):
         if tup.stream == "person_obj":
+            self.log("got to MergeItem from person-obj-stream")
             person_obj, person_id, image_id = tup.values
             self.bucket[person_id] = {'image_id': image_id, 'item_stack': 0, 'person_obj': person_obj}
         else:
+            self.log("got to MergeItem from item-bolt")
             item, person_id = tup.values
             self.bucket[person_id]['person_obj']['items'].append(item)
             self.bucket[person_id]['item_stack'] += 1
+            self.log("so far {0}/{2} items was save for person {1}".format(self.bucket[person_id]['item_stack'],
+                                                                           person_id,
+                                                                           self.bucket[person_id]['person_obj']['num_of_items']))
             if self.bucket[person_id]['item_stack'] == self.bucket[person_id]['person_obj']['num_of_items']:
-                self.emit([self.bucket[person_id]['person_obj'], self.bucket[person_id]['image_id']])
-                del self.bucket[person_id]
+                self.log("Done! all items for person {0} arrived, ready to Merge! :)".format(person_id))
+                # self.emit([self.bucket[person_id]['person_obj'], self.bucket[person_id]['image_id']])
+                # del self.bucket[person_id]

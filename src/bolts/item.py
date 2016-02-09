@@ -12,8 +12,7 @@ class ItemBolt(Bolt):
         self.db = constants.db
 
     def process(self, tup):
-        item = tup[0]
-        person_id = tup[1]
+        item, person_id = tup.values
         try:
             item['fp'], item['similar_results'] = find_similar_mongo.find_top_n_results(item['image'], item['mask'],
                                                                                         100, item['category'],
