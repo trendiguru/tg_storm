@@ -40,7 +40,8 @@
           ["item", "person_id"]
           :p 1
           )
-
+    }
+    (comment
     "merge-items-bolt" (python-bolt-spec
           options
           {"item-bolt" ["person_id"]
@@ -49,8 +50,7 @@
           ["person", "image_id"]
           :p 1
           )
-    }
-    (comment
+
     "merge-people-bolt" (python-bolt-spec
           options
           {"merge-items-bolt" ["image_id"]
