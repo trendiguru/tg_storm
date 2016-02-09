@@ -59,7 +59,7 @@ class NewImageBolt(Bolt):
             image_dict['num_of_people'] = idx
             # emit to the merge-people bolt
             self.log("gonna emit {0} as image_id".format(image_dict['image_id']))
-            self.emit([image_dict, image_dict['image_id']], stream='image_obj')
+            # self.emit([image_dict, image_dict['image_id']], stream='image_obj')
         else:
             db.irrelevant_images.insert_one(image_dict)
             self.log('{url} stored as irrelevant'.format(url=image_url))
