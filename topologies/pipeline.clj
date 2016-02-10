@@ -26,35 +26,33 @@
           options
           {["image-bolt" "person_args"] :shuffle}
           "bolts.person.PersonBolt"
-          ["item_args", "person_id"]
-          ;; ["item args" ["item_args", "person_id"]]
-          ;; "person_obj" ["person_obj", "person_id", "image_id"]}
+          {"item args" ["item_args", "person_id"]
+           "person_obj" ["person_obj", "person_id", "image_id"]}
           :p 1
           )
 
     "item-bolt" (python-bolt-spec
           options
-          ;; {["person-bolt" "item_args"] :shuffle}
-          {"person-bolt" :shuffle}
+          {["person-bolt" "item_args"] :shuffle}
           "bolts.item.ItemBolt"
           ["item", "person_id"]
           :p 1
           )
-    }
-    (comment
+
     "merge-items-bolt" (python-bolt-spec
           options
-          {"item-bolt" ["person_id"]
-           ["person-bolt" "person_obj"] ["person_id"]}
+          {["person-bolt" "person_obj"] ["person_id"]
+            "item-bolt" ["person_id"]}
           "bolts.person.MergeItems"
           ["person", "image_id"]
           :p 1
           )
-
+    }
+    (comment
     "merge-people-bolt" (python-bolt-spec
           options
-          {"merge-items-bolt" ["image_id"]
-           ["image-bolt" "image_obj"] ["image_id"]}
+          {["image-bolt" "image_obj"] ["image_id"]
+            "merge-items-bolt" ["image_id"]}
           "bolts.image.MergePeople"
           []
           :p 1
