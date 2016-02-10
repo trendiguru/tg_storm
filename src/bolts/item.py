@@ -29,7 +29,7 @@ class ItemBolt(Bolt):
             # self.log("person_id: {0}".format(person_id))
             # self.log("out_item['category']: {0}".format(out_item['category']))
             # self.log("similar_item: {0}".format(out_item['similar_results'][0]))
-            self.emit([out_item, str(person_id)])
+            self.emit([out_item, person_id])
         except Exception as e:
             self.log(e.message, e.args)
             # TODO - tell someone we have an item down
