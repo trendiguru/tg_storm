@@ -24,11 +24,11 @@ class ItemBolt(Bolt):
                                                                                                 100, item['category'],
                                                                                                 'products')
             self.log("back from find_top_n after {0} secs..".format(time.time() - start))
-            out_item['similar_results'] = [item.pop("_id", item) for item in out_item['similar_results']]
+            # out_item['similar_results'] = [item.pop("_id", item) for item in out_item['similar_results']]
             out_item['category'] = item['category']
-            # self.log("person_id: {0}".format(person_id))
-            # self.log("out_item['category']: {0}".format(out_item['category']))
-            # self.log("similar_item: {0}".format(out_item['similar_results'][0]))
+            self.log("person_id: {0}".format(person_id))
+            self.log("out_item['category']: {0}".format(out_item['category']))
+            self.log("similar_item: {0}".format(out_item['similar_results'][0]))
             self.emit([out_item, person_id])
         except Exception as e:
             self.log(e.message, e.args)
