@@ -25,7 +25,7 @@ class ItemBolt(Bolt):
                                                                                                 'products')
             self.log("back from find_top_n after {0} secs..".format(time.time() - start))
             out_item['category'] = item['category']
-            self.emit([out_item, person_id])
+            self.emit([out_item, str(person_id)])
         except Exception as e:
             self.log(e.message, e.args)
             # TODO - tell someone we have an item down
