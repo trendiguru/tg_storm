@@ -73,5 +73,5 @@ class MergeItems(Bolt):
                                                                            self.bucket[person_id]['person_obj']['num_of_items']))
             if self.bucket[person_id]['item_stack'] == self.bucket[person_id]['person_obj']['num_of_items']:
                 self.log("Done! all items for person {0} arrived, ready to Merge! :)".format(person_id))
-                # self.emit([self.bucket[person_id]['person_obj'], self.bucket[person_id]['image_id']])
-                # del self.bucket[person_id]
+                self.emit([self.bucket[person_id]['person_obj'], self.bucket[person_id]['image_id']])
+                del self.bucket[person_id]
