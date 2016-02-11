@@ -24,7 +24,7 @@ class ItemBolt(Bolt):
                                                                                                 100, item['category'],
                                                                                                 'products')
             self.log("back from find_top_n after {0} secs..".format(time.time() - start))
-            # out_item['similar_results'] = [item.pop("_id", item) for item in out_item['similar_results']]
+            # out_item['similar_results'] = [item for item in out_item['similar_results']]
             out_item['category'] = item['category']
             self.log("person_id: {0}".format(person_id))
             self.log("out_item['category']: {0}".format(out_item['category']))
