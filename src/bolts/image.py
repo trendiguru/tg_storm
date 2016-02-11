@@ -59,7 +59,7 @@ class NewImageBolt(Bolt):
             image_dict['num_of_people'] = idx
             # emit to the merge-people bolt
             self.log("gonna emit {0} as image_id".format(image_dict['image_id']))
-            # self.emit([image_dict, image_dict['image_id']], stream='image_obj')
+            self.emit([image_dict, image_dict['image_id']], stream='image_obj')
         else:
             db.irrelevant_images.insert_one(image_dict)
             self.log('{url} stored as irrelevant'.format(url=image_url))
@@ -73,14 +73,20 @@ class MergePeople(Bolt):
 
     def process(self, tup):
         if tup.stream == "image_obj":
+            self.log("got to MergePeople from image_obj-stream")
             image_dict, image_id = tup.values
             self.bucket[image_id] = {'person_stack': 0, 'image_obj': image_dict}
         else:
+            self.log("got to MergePeople from MergeItems bolt")
             person, image_id = tup.values
             self.bucket[image_id]['image_obj']['people'].append(person)
             self.bucket[image_id]['person_stack'] += 1
+            self.log("so far {0}/{2} persons was save for image {1}".format(self.bucket[image_id]['person_stack'],
+                                                                            image_id,
+                                                                            self.bucket[image_id]['image_obj']['num_of_people']))
             if self.bucket[image_id]['stack'] == self.bucket[image_id]['image_obj']['num_of_people']:
-                insert_result = db.images.insert_one(self.bucket[image_id]['image_obj'])
-                del self.bucket[image_id]
-                if not insert_result.acknowledged:
-                    self.log("Insert failed")
+                # insert_result = db.images.insert_one(self.bucket[image_id]['image_obj'])
+                self.log("Done! all people for image {0} arrived, ready to Insert! :)".format(image_id))
+                # del self.bucket[image_id]
+                # if not insert_result.acknowledged:
+                #     self.log("Insert failed")

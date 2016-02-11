@@ -28,7 +28,7 @@
           "bolts.person.PersonBolt"
           {"item_args" ["item_args", "person_id"]
            "person_obj" ["person_obj", "person_id", "image_id"]}
-          :p 1
+          :p 3
           )
 
     "item-bolt" (python-bolt-spec
@@ -36,7 +36,7 @@
           {["person-bolt" "item_args"] :shuffle}
           "bolts.item.ItemBolt"
           ["item", "person_id"]
-          :p 1
+          :p 3
           )
 
     "merge-items-bolt" (python-bolt-spec
@@ -47,8 +47,7 @@
           ["person", "image_id"]
           :p 1
           )
-    }
-    (comment
+
     "merge-people-bolt" (python-bolt-spec
           options
           {["image-bolt" "image_obj"] ["image_id"]
@@ -57,6 +56,6 @@
           []
           :p 1
           )
-    )
+    }
   ]
 )
