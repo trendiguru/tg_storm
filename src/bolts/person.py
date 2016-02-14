@@ -52,8 +52,8 @@ class PersonBolt(Bolt):
         self.log("gonna emit person {0} to merge..".format(person['_id']))
         self.emit([person, person['_id'], image_id], stream='person_obj')
         for item_args in items:
-            self.emit([item_args, person['_id']], stream='item_args')
             self.log("emits the {0}".format(item_args['category']))
+            self.emit([item_args, person['_id']], stream='item_args')
 
 
 class MergeItems(Bolt):
