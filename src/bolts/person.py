@@ -66,6 +66,8 @@ class MergeItems(Bolt):
         else:
             self.log("got to MergeItem from item-bolt")
             item, person_id = tup.values
+            if not self.bucket[person_id]:
+                self.log("You were right! it got there before the person did.. :)")
             self.bucket[person_id]['person_obj']['items'].append(item)
             self.bucket[person_id]['item_stack'] += 1
             self.log("so far {0}/{2} items was save for person {1}".format(self.bucket[person_id]['item_stack'],
