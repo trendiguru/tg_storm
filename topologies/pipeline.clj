@@ -45,7 +45,7 @@
             "item-bolt" ["person_id"]}
           "bolts.person.MergeItems"
           ["person", "image_id"]
-          :p 1
+          :p 2
           )
 
     "merge-people-bolt" (python-bolt-spec
