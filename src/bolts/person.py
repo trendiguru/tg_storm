@@ -40,17 +40,20 @@ class PersonBolt(Bolt):
         mask, labels = paper_job.result[:2]
         final_mask = pipeline.after_pd_conclusions(mask, labels)
         idx = 0
+        items = []
         for num in np.unique(final_mask):
             category = list(labels.keys())[list(labels.values()).index(num)]
             if category in constants.paperdoll_shopstyle_women.keys():
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
                 item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist()}
-                self.emit([item_args, person['_id']], stream='item_args')
-                self.log("emits the {0}".format(category))
+                items.append(item_args)
                 idx += 1
         person['num_of_items'] = idx
         self.log("gonna emit person {0} to merge..".format(person['_id']))
         self.emit([person, person['_id'], image_id], stream='person_obj')
+        for item_args in items:
+            self.emit([item_args, person['_id']], stream='item_args')
+            self.log("emits the {0}".format(item_args['category']))
 
 
 class MergeItems(Bolt):
@@ -66,8 +69,6 @@ class MergeItems(Bolt):
         else:
             self.log("got to MergeItem from item-bolt")
             item, person_id = tup.values
-            if not self.bucket[person_id]:
-                self.log("You were right! it got there before the person did.. :)")
             self.bucket[person_id]['person_obj']['items'].append(item)
             self.bucket[person_id]['item_stack'] += 1
             self.log("so far {0}/{2} items was save for person {1}".format(self.bucket[person_id]['item_stack'],
