@@ -81,9 +81,9 @@ class MergePeople(Bolt):
             person, image_id = tup.values
             self.bucket[image_id]['image_obj']['people'].append(person)
             self.bucket[image_id]['person_stack'] += 1
-            self.log("so far {0}/{2} persons was save for image {1}".format(self.bucket[image_id]['person_stack'],
-                                                                            image_id,
-                                                                            self.bucket[image_id]['image_obj']['num_of_people']))
+            self.log("so far {0}/{2} persons was saved for image {1}".format(self.bucket[image_id]['person_stack'],
+                                                                             image_id,
+                                                                             self.bucket[image_id]['image_obj']['num_of_people']))
             if self.bucket[image_id]['person_stack'] == self.bucket[image_id]['image_obj']['num_of_people']:
                 # insert_result = db.images.insert_one(self.bucket[image_id]['image_obj'])
                 self.log("Done! all people for image {0} arrived, ready to Insert! :)".format(image_id))

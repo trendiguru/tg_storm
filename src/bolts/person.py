@@ -71,9 +71,9 @@ class MergeItems(Bolt):
             item, person_id = tup.values
             self.bucket[person_id]['person_obj']['items'].append(item)
             self.bucket[person_id]['item_stack'] += 1
-            self.log("so far {0}/{2} items was save for person {1}".format(self.bucket[person_id]['item_stack'],
-                                                                           person_id,
-                                                                           self.bucket[person_id]['person_obj']['num_of_items']))
+            self.log("so far {0}/{2} items was saved for person {1}".format(self.bucket[person_id]['item_stack'],
+                                                                            person_id,
+                                                                            self.bucket[person_id]['person_obj']['num_of_items']))
             if self.bucket[person_id]['item_stack'] == self.bucket[person_id]['person_obj']['num_of_items']:
                 self.log("Done! all items for person {0} arrived, ready to Merge! :)".format(person_id))
                 self.emit([self.bucket[person_id]['person_obj'], self.bucket[person_id]['image_id']])
