@@ -45,7 +45,7 @@
             "item-bolt" ["person_id"]}
           "bolts.person.MergeItems"
           ["person", "image_id"]
-          :p 2
+          :p 4
           )
 
     "merge-people-bolt" (python-bolt-spec
@@ -54,7 +54,7 @@
             "merge-items-bolt" ["image_id"]}
           "bolts.image.MergePeople"
           []
-          :p 1
+          :p 4
           )
     }
   ]
