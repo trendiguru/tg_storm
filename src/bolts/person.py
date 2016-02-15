@@ -4,7 +4,7 @@ from streamparse.bolt import Bolt
 import bson
 import numpy as np
 import time
-from trendi import whitelist, page_results, Utils, background_removal, pipeline, constants
+# from trendi import whitelist, page_results, Utils, background_removal, pipeline, constants
 # from trendi.paperdoll import paperdoll_parse_enqueue
 
 
