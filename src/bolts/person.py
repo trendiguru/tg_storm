@@ -51,13 +51,12 @@ class PersonBolt(Bolt):
                 items.append(item_args)
                 idx += 1
         person['num_of_items'] = idx
-        self.log("gonna emit person {0} to merge..".format(person['_id']))
-        self.emit([person, person['_id'], image_id], stream='person_obj')
-        self.log("emitting all the items for person {0}".format(person['_id']))
+        id1 = self.emit([person, person['_id'], image_id], stream='person_obj')
+        self.log("emitted person {0} to merge, task id is {1}".format(person['_id'], id1))
         for item in items:
             self.log("emitting {0}".format(item['category']))
-            self.emit([item], stream='item_args')
-            self.log("AFTER ITEM EMIT")
+            id2 = self.emit([item], stream='item_args')
+            self.log("AFTER ITEM {id} EMIT".format(id=id2))
 
     # def process(self, tup):
     #     self.log("got into person-bolt! :)")
