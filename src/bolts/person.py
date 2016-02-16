@@ -19,7 +19,9 @@ class PersonBolt(Bolt):
 
     def process(self, tup):
         self.log("got into person-bolt! :)")
-        person, image_id, image_url = tup.values
+        image_id = tup.values.pop('image_id')
+        image_url = tup.values.pop('image_url')
+        person = tup.values
         person['_id'] = str(bson.ObjectId())
         person['items'] = []
         image = background_removal.person_isolation(Utils.get_cv2_img_array(image_url), person['face'])
@@ -44,13 +46,14 @@ class PersonBolt(Bolt):
             category = list(labels.keys())[list(labels.values()).index(num)]
             if category in constants.paperdoll_shopstyle_women.keys():
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
-                item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist()}
+                item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist(),
+                             'person_id': person['_id']}
                 items.append(item_args)
                 idx += 1
         person['num_of_items'] = idx
         self.log("gonna emit person {0} to merge..".format(person['_id']))
         self.emit([person, person['_id'], image_id], stream='person_obj')
-        self.emit_many([items, person['_id']], stream='item_args')
+        self.emit_many([items], stream='item_args')
         self.log("emitted all the items for person {0}".format(person['_id']))
 
     # def process(self, tup):

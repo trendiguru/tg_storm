@@ -51,14 +51,14 @@ class NewImageBolt(Bolt):
                 x, y, w, h = face
                 person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
                              min(image.shape[0], 8 * h)]
-                person_args = {'face': face.tolist(), 'person_bb': person_bb}
+                person_args = {'face': face.tolist(), 'person_bb': person_bb, 'image_id': image_dict['image_id'],
+                               'image_url': image_url}
                 idx += 1
                 people.append(person_args)
             image_dict['num_of_people'] = idx
-            # emit to the merge-people bolt
             self.log("gonna emit {0} as image_id".format(image_dict['image_id']))
             self.emit([image_dict, image_dict['image_id']], stream='image_obj')
-            self.emit_many([people, image_dict['image_id'], image_url], stream='person_args')
+            self.emit_many([people], stream='person_args')
             self.log('{idx} people from {url} has been emitted'.format(idx=idx, url=image_url))
         else:
             db.irrelevant_images.insert_one(image_dict)
