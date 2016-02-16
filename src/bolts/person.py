@@ -72,15 +72,15 @@ class PersonBolt(Bolt):
         idx = 0
         items = []
         for cat in ['dress', 'coat']:
-            item_args = {'item_id': str(bson.ObjectId()), 'category': cat}
+            item_args = {'item_id': str(bson.ObjectId()), 'category': cat, 'person_id': person['_id']}
             items.append(item_args)
             idx += 1
         person['num_of_items'] = idx
         self.log("gonna emit person {0} to merge..".format(person['_id']))
-        self.emit([person, person['_id'], image_id], stream='person_obj')
-        for item_args in items:
-            self.log("emits the {0}".format(item_args['category']))
-            self.emit([item_args, person['_id']], stream='item_args')
+        self.emit([person, image_id], stream='person_obj')
+        for item in items:
+            self.log("emits the {0}".format(item['category']))
+            self.emit([item], stream='item_args')
 
 
 class MergeItems(Bolt):
