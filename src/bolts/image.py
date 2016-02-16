@@ -59,7 +59,8 @@ class NewImageBolt(Bolt):
             self.log("gonna emit {0} as image_id".format(image_dict['image_id']))
             self.emit([image_dict, image_dict['image_id']], stream='image_obj')
             self.log('gonna emit {idx} people from {id}'.format(idx=idx, id=image_dict['image_id']))
-            self.emit_many([people], stream='person_args')
+            for person in people:
+                self.emit([person], stream='person_args')
         else:
             db.irrelevant_images.insert_one(image_dict)
             self.log('{url} stored as irrelevant'.format(url=image_url))
