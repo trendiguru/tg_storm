@@ -13,8 +13,8 @@ class ItemBolt(Bolt):
         self.db = constants.db
 
     def process(self, tup):
-        person_id = tup.values.pop('person_id')
-        item = tup.values
+        person_id = tup.values[0].pop('person_id')
+        item = tup.values[0]
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
         out_item = {}
