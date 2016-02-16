@@ -17,7 +17,7 @@
           options
           {"image-spout" :shuffle}
           "bolts.image.NewImageBolt"
-          {"person_args" ["person_args"]
+          {"person_args" ["person"]
            "image_obj" ["image_obj", "image_id"]}
           :p 1
           )
@@ -26,7 +26,7 @@
           options
           {["image-bolt" "person_args"] :shuffle}
           "bolts.person.PersonBolt"
-          {"item_args" ["item_args"]
+          {"item_args" ["item"]
            "person_obj" ["person_obj", "person_id", "image_id"]}
           :p 3
           )

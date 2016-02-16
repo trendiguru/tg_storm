@@ -77,7 +77,7 @@ class PersonBolt(Bolt):
             idx += 1
         person['num_of_items'] = idx
         self.log("gonna emit person {0} to merge..".format(person['_id']))
-        self.emit([person, image_id], stream='person_obj')
+        self.emit([person, person['_id'], image_id], stream='person_obj')
         for item in items:
             self.log("emits the {0}".format(item['category']))
             self.emit([item], stream='item_args')
@@ -90,11 +90,11 @@ class MergeItems(Bolt):
 
     def process(self, tup):
         if tup.stream == "person_obj":
-            self.log("got to MergeItem from person-obj-stream")
+            self.log("got to MergeItem from person-obj-stream, tup.values = {0}".format(tup.values))
             person_obj, person_id, image_id = tup.values
             self.bucket[person_id] = {'image_id': image_id, 'item_stack': 0, 'person_obj': person_obj}
         else:
-            self.log("got to MergeItem from item-bolt")
+            self.log("got to MergeItem from item-bolt, tup.values = {0}".format(tup.values))
             item, person_id = tup.values
             self.bucket[person_id]['person_obj']['items'].append(item)
             self.bucket[person_id]['item_stack'] += 1
