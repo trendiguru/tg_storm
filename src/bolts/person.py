@@ -55,7 +55,9 @@ class PersonBolt(Bolt):
         self.emit([person, person['_id'], image_id], stream='person_obj')
         self.log("emitting all the items for person {0}".format(person['_id']))
         for item in items:
+            self.log("emitting {0}".format(item['category']))
             self.emit([item], stream='item_args')
+            self.log("AFTER ITEM EMIT")
 
     # def process(self, tup):
     #     self.log("got into person-bolt! :)")
