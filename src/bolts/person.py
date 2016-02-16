@@ -53,8 +53,8 @@ class PersonBolt(Bolt):
         person['num_of_items'] = idx
         self.log("gonna emit person {0} to merge..".format(person['_id']))
         self.emit([person, person['_id'], image_id], stream='person_obj')
+        self.log("emitting all the items for person {0}".format(person['_id']))
         self.emit_many([items], stream='item_args')
-        self.log("emitted all the items for person {0}".format(person['_id']))
 
     # def process(self, tup):
     #     self.log("got into person-bolt! :)")
