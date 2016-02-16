@@ -51,8 +51,8 @@ class PersonBolt(Bolt):
         self.log("gonna emit person {0} to merge..".format(person['_id']))
         self.emit([person, person['_id'], image_id], stream='person_obj')
         for item_args in items:
-            self.log("emits the {0}".format(item_args['category']))
             self.emit([item_args, person['_id']], stream='item_args')
+            self.log("emitted the {0}".format(item_args['category']))
 
     # def process(self, tup):
     #     self.log("got into person-bolt! :)")
