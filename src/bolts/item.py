@@ -28,8 +28,7 @@ class ItemBolt(Bolt):
 
 
     def process(self, tup):
-        person_id = tup.values[0].pop('person_id')
-        item = tup.values[0]
+        item, person_id = tup.values
         out_item = {}
         start = time.time()
         out_item['fp'], out_item['similar_results'] = 1, 2
