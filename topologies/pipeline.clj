@@ -28,7 +28,8 @@
           "bolts.person.PersonBolt"
           {"item_args" ["item"]
            "person_obj" ["person_obj", "person_id", "image_id"]}
-          :p 10
+          :conf {"topology.message.timeout.secs", 1000}
+	  :p 10
           )
 
     "item-bolt" (python-bolt-spec
