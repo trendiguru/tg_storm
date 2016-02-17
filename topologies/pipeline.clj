@@ -9,6 +9,7 @@
           options
           "spouts.new_images.NewImageSpout"
           ["page_url", "image_url"]
+          :conf {"topology.message.timeout.secs", 1000}
           )
     }
     ;; bolt configuration
@@ -19,6 +20,7 @@
           "bolts.image.NewImageBolt"
           {"person_args" ["person"]
            "image_obj" ["image_obj", "image_id"]}
+          :conf {"topology.message.timeout.secs", 1000}
           :p 1
           )
 
@@ -29,7 +31,7 @@
           {"item_args" ["item"]
            "person_obj" ["person_obj", "person_id", "image_id"]}
           :conf {"topology.message.timeout.secs", 1000}
-	  :p 10
+	      :p 10
           )
 
     "item-bolt" (python-bolt-spec
@@ -37,6 +39,7 @@
           {["person-bolt" "item_args"] :shuffle}
           "bolts.item.ItemBolt"
           ["item", "person_id"]
+          :conf {"topology.message.timeout.secs", 1000}
           :p 10
           )
 
@@ -46,6 +49,7 @@
             "item-bolt" ["person_id"]}
           "bolts.person.MergeItems"
           ["person", "image_id"]
+          :conf {"topology.message.timeout.secs", 1000}
           :p 5
           )
 
@@ -55,6 +59,7 @@
             "merge-items-bolt" ["image_id"]}
           "bolts.image.MergePeople"
           []
+          :conf {"topology.message.timeout.secs", 1000}
           :p 5
           )
     }
