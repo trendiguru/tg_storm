@@ -90,11 +90,9 @@ class MergeItems(Bolt):
 
     def process(self, tup):
         if tup.stream == "person_obj":
-            self.log("got to MergeItem from person-obj-stream, tup.values = {0}".format(tup.values))
             person_obj, person_id, image_id = tup.values
             self.bucket[person_id] = {'image_id': image_id, 'item_stack': 0, 'person_obj': person_obj}
         else:
-            self.log("got to MergeItem from item-bolt, tup.values = {0}".format(tup.values))
             item, person_id = tup.values
             self.bucket[person_id]['person_obj']['items'].append(item)
             self.bucket[person_id]['item_stack'] += 1
