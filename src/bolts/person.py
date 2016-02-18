@@ -47,18 +47,17 @@ class PersonBolt(Bolt):
             if category in constants.paperdoll_shopstyle_women.keys():
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
                 item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist()}
-                self.log("emitting {0}".format(item_args['category']))
-                id2 = self.emit([item_args, person['_id']], stream='item_args')
-                self.log("AFTER ITEM {id} EMIT".format(id=id2))
-                # items.append(item_args)
+                items.append(item_args)
                 idx += 1
         person['num_of_items'] = idx
         id1 = self.emit([person, person['_id'], image_id], stream='person_obj')
+        self.ack([person, person['_id'], image_id])
         self.log("emitted person {0} to merge, task id is {1}".format(person['_id'], id1))
-        # for item in items:
-        #     self.log("emitting {0}".format(item['category']))
-        #     id2 = self.emit([item, person['_id']], stream='item_args')
-        #     self.log("AFTER ITEM {id} EMIT".format(id=id2))
+        for item in items:
+            self.log("emitting {0}".format(item['category']))
+            id2 = self.emit([item, person['_id']], stream='item_args')
+            self.ack([item, person['_id']])
+            self.log("AFTER ITEM {id} EMIT".format(id=id2))
 
     # def process(self, tup):
     #     self.log("got into person-bolt! :)")
