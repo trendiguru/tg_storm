@@ -17,46 +17,6 @@ class PersonBolt(Bolt):
     def initialize(self, conf, ctx):
         self.db = constants.db
 
-    def process(self, tup):
-        self.log("got into person-bolt! :)")
-        image_id = tup.values[0].pop('image_id')
-        image_url = tup.values[0].pop('image_url')
-        person = tup.values[0]
-        person['_id'] = str(bson.ObjectId())
-        person['items'] = []
-        image = background_removal.person_isolation(Utils.get_cv2_img_array(image_url), person['face'])
-        # TODO - serialize image obj or .tolist() it
-        self.log("sending to Herr paperdoll")
-        start = time.time()
-        paper_job = paperdoll_parse_enqueue.paperdoll_enqueue(image, str(person['_id']))
-        while not paper_job.is_finished or paper_job.is_failed:
-            time.sleep(0.5)
-        self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
-        # if paper_job.is_failed:
-        #     raise SystemError("Paper-job has failed!")
-        #     # TODO - update someone that we got a man down !
-        # elif not paper_job.result:
-        #     elapsed = time.time()-start_time
-        #     raise SystemError("Paperdoll has returned empty results ({0} elapsed,timeout={1} )!".format(elapsed,paper_job.timeout))
-        mask, labels = paper_job.result[:2]
-        final_mask = pipeline.after_pd_conclusions(mask, labels)
-        idx = 0
-        items = []
-        for num in np.unique(final_mask):
-            category = list(labels.keys())[list(labels.values()).index(num)]
-            if category in constants.paperdoll_shopstyle_women.keys():
-                item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
-                item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist()}
-                items.append(item_args)
-                idx += 1
-        person['num_of_items'] = idx
-        id1 = self.emit([person, person['_id'], image_id], stream='person_obj')
-        self.log("emitted person {0} to merge, task id is {1}".format(person['_id'], id1))
-        for item in items:
-            self.log("emitting {0}".format(item['category']))
-            id2 = self.emit([item, person['_id']], stream='item_args')
-            self.log("AFTER ITEM {id} EMIT".format(id=id2))
-
     # def process(self, tup):
     #     self.log("got into person-bolt! :)")
     #     image_id = tup.values[0].pop('image_id')
@@ -64,22 +24,62 @@ class PersonBolt(Bolt):
     #     person = tup.values[0]
     #     person['_id'] = str(bson.ObjectId())
     #     person['items'] = []
+    #     image = background_removal.person_isolation(Utils.get_cv2_img_array(image_url), person['face'])
+    #     # TODO - serialize image obj or .tolist() it
     #     self.log("sending to Herr paperdoll")
     #     start = time.time()
-    #     time.sleep(25)
+    #     paper_job = paperdoll_parse_enqueue.paperdoll_enqueue(image, str(person['_id']))
+    #     while not paper_job.is_finished or paper_job.is_failed:
+    #         time.sleep(0.5)
     #     self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
+    #     # if paper_job.is_failed:
+    #     #     raise SystemError("Paper-job has failed!")
+    #     #     # TODO - update someone that we got a man down !
+    #     # elif not paper_job.result:
+    #     #     elapsed = time.time()-start_time
+    #     #     raise SystemError("Paperdoll has returned empty results ({0} elapsed,timeout={1} )!".format(elapsed,paper_job.timeout))
+    #     mask, labels = paper_job.result[:2]
+    #     final_mask = pipeline.after_pd_conclusions(mask, labels)
     #     idx = 0
     #     items = []
-    #     for cat in ['dress', 'coat']:
-    #         item_args = {'item_id': str(bson.ObjectId()), 'category': cat}
-    #         items.append(item_args)
-    #         idx += 1
+    #     for num in np.unique(final_mask):
+    #         category = list(labels.keys())[list(labels.values()).index(num)]
+    #         if category in constants.paperdoll_shopstyle_women.keys():
+    #             item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
+    #             item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist()}
+    #             items.append(item_args)
+    #             idx += 1
     #     person['num_of_items'] = idx
-    #     self.log("gonna emit person {0} to merge..".format(person['_id']))
-    #     self.emit([person, person['_id'], image_id], stream='person_obj')
+    #     id1 = self.emit([person, person['_id'], image_id], stream='person_obj')
+    #     self.log("emitted person {0} to merge, task id is {1}".format(person['_id'], id1))
     #     for item in items:
-    #         self.log("emits the {0}".format(item['category']))
-    #         self.emit([item, person['_id']], stream='item_args')
+    #         self.log("emitting {0}".format(item['category']))
+    #         id2 = self.emit([item, person['_id']], stream='item_args')
+    #         self.log("AFTER ITEM {id} EMIT".format(id=id2))
+
+    def process(self, tup):
+        self.log("got into person-bolt! :)")
+        image_id = tup.values[0].pop('image_id')
+        image_url = tup.values[0].pop('image_url')
+        person = tup.values[0]
+        person['_id'] = str(bson.ObjectId())
+        person['items'] = []
+        self.log("sending to Herr paperdoll")
+        start = time.time()
+        time.sleep(25)
+        self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
+        idx = 0
+        items = []
+        for cat in ['dress', 'coat']:
+            item_args = {'item_id': str(bson.ObjectId()), 'category': cat}
+            items.append(item_args)
+            idx += 1
+        person['num_of_items'] = idx
+        self.log("gonna emit person {0} to merge..".format(person['_id']))
+        self.emit([person, person['_id'], image_id], stream='person_obj')
+        for item in items:
+            self.log("emits the {0}".format(item['category']))
+            self.emit([item, person['_id']], stream='item_args')
 
 
 class MergeItems(Bolt):
