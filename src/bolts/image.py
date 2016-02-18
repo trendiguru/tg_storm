@@ -64,7 +64,6 @@ class NewImageBolt(Bolt):
         else:
             db.irrelevant_images.insert_one(image_dict)
             self.log('{url} stored as irrelevant'.format(url=image_url))
-        self.ack(tup)
 
 
 class MergePeople(Bolt):
@@ -92,4 +91,3 @@ class MergePeople(Bolt):
                 del self.bucket[image_id]
                 if not insert_result.acknowledged:
                     self.log("Insert failed")
-        self.ack(tup)
