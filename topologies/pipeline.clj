@@ -2,8 +2,7 @@
   (:use     [streamparse.specs])
   (:gen-class))
 
-(defn pipeline ["topology.enable.message.timeouts=true",
-                "topology.message.timeout.secs=1000"]
+(defn pipeline [options]
    [
     ;; spout configuration
     {"image-spout" (python-spout-spec
