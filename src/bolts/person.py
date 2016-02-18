@@ -51,13 +51,13 @@ class PersonBolt(Bolt):
                 idx += 1
         person['num_of_items'] = idx
         id1 = self.emit([person, person['_id'], image_id], stream='person_obj')
-        self.ack([person, person['_id'], image_id])
         self.log("emitted person {0} to merge, task id is {1}".format(person['_id'], id1))
         for item in items:
             self.log("emitting {0}".format(item['category']))
             id2 = self.emit([item, person['_id']], stream='item_args')
             self.ack([item, person['_id']])
             self.log("AFTER ITEM {id} EMIT".format(id=id2))
+        self.ack(tup)
 
     # def process(self, tup):
     #     self.log("got into person-bolt! :)")
@@ -104,3 +104,4 @@ class MergeItems(Bolt):
                 self.log("Done! all items for person {0} arrived, ready to Merge! :)".format(person_id))
                 self.emit([self.bucket[person_id]['person_obj'], self.bucket[person_id]['image_id']])
                 del self.bucket[person_id]
+        self.ack(tup)

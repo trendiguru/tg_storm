@@ -58,14 +58,13 @@ class NewImageBolt(Bolt):
             image_dict['num_of_people'] = idx
             self.log("gonna emit {0} as image_id".format(image_dict['image_id']))
             self.emit([image_dict, image_dict['image_id']], stream='image_obj')
-            self.ack([image_dict, image_dict['image_id']])
             self.log('gonna emit {idx} people from {id}'.format(idx=idx, id=image_dict['image_id']))
             for person in people:
                 self.emit([person], stream='person_args')
-                self.ack([person])
         else:
             db.irrelevant_images.insert_one(image_dict)
             self.log('{url} stored as irrelevant'.format(url=image_url))
+        self.ack(tup)
 
 
 class MergePeople(Bolt):
@@ -93,3 +92,4 @@ class MergePeople(Bolt):
                 del self.bucket[image_id]
                 if not insert_result.acknowledged:
                     self.log("Insert failed")
+        self.ack(tup)
