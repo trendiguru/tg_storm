@@ -69,7 +69,7 @@ class PersonBolt(Bolt):
         person['items'] = []
         self.log("sending to Herr paperdoll")
         start = time.time()
-        time.sleep(30)
+        time.sleep(50)
         self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
         idx = 0
         items = []
