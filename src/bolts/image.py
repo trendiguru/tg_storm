@@ -11,7 +11,7 @@ from trendi import whitelist, page_results, Utils, background_removal
 
 class NewImageBolt(Bolt):
 
-    auto_ack = False
+    # auto_ack = False
     auto_fail = False
 
     def initialize(self, conf, ctx):

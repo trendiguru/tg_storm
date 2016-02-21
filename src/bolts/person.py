@@ -10,7 +10,7 @@ from trendi.paperdoll import paperdoll_parse_enqueue
 
 class PersonBolt(Bolt):
 
-    auto_ack = False
+    # auto_ack = False
     auto_fail = False
 
     # def fail(self, tup):

@@ -9,7 +9,7 @@ from trendi import find_similar_mongo, constants
 
 class ItemBolt(Bolt):
 
-    auto_ack = False
+    # auto_ack = False
     auto_fail = False
 
     def initialize(self, conf, ctx):
