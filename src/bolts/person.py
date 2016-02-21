@@ -69,11 +69,11 @@ class PersonBolt(Bolt):
         person['items'] = []
         self.log("sending to Herr paperdoll")
         start = time.time()
-        time.sleep(35)
+        time.sleep(5)
         self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
         idx = 0
         items = []
-        for cat in ['dress', 'coat']:
+        for cat in ['dress', 'coat', 'shirt']:
             item_args = {'item_id': str(bson.ObjectId()), 'category': cat}
             items.append(item_args)
             self.log("emits the {0}".format(item_args['category']))
