@@ -17,7 +17,7 @@ class NewImageSpout(Spout):
             return
         page_url, image_url, lang = job.args  # TODO - cancel the lang..
         self.log("spouts page_url: {0}, image_url: {1}".format(page_url, image_url))
-        self.emit([page_url, image_url], tup_id=5)
+        self.emit([page_url, image_url], tup_id=image_url)
 
     def fail(self, tup_id):
         self.log("OMG {0} FAILED".format(tup_id))
