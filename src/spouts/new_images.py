@@ -14,13 +14,15 @@ class NewImageSpout(Spout):
     def next_tuple(self):
         job = self.q.dequeue()
         if not job:
-                return
+            return
         page_url, image_url, lang = job.args  # TODO - cancel the lang..
         self.log("spouts page_url: {0}, image_url: {1}".format(page_url, image_url))
         self.emit([page_url, image_url])
 
     def fail(self, tup_id):
         self.log("OMG {0} FAILED".format(tup_id))
+
+
 
 """
 JSON serializable:

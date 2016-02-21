@@ -10,6 +10,9 @@ from trendi.paperdoll import paperdoll_parse_enqueue
 
 class PersonBolt(Bolt):
 
+    auto_ack = False
+    auto_fail = False
+
     # def fail(self, tup):
     #     tup_id = tup.id if isinstance(tup, Tuple) else tup
     #     self.send_message({'command': 'ack', 'id': tup_id})
