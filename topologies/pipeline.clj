@@ -9,8 +9,6 @@
           options
           "spouts.new_images.NewImageSpout"
           ["page_url", "image_url"]
-          :conf {"topology.message.timeout.secs", 1000}
-          :conf {"topology.enable.message.timeouts", false}
           )
     }
     ;; bolt configuration
