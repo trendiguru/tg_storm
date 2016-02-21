@@ -22,6 +22,9 @@ class NewImageSpout(Spout):
     def fail(self, tup_id):
         self.log("OMG {0} FAILED".format(tup_id))
 
+    def ack(self, tup_id):
+        self.log("HEYYY!.. {0} ACKNOWLEGED".format(tup_id))
+
 
 
 """
