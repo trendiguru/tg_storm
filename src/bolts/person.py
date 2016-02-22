@@ -17,11 +17,10 @@ class PersonBolt(Bolt):
     def process(self, tup):
         self.log("got into person-bolt! :)")
         image_id = tup.values[0].pop('image_id')
-        image_url = tup.values[0].pop('image_url')
+        image = tup.values[0].pop('image')
         person = tup.values[0]
         person['_id'] = str(bson.ObjectId())
         person['items'] = []
-        image = background_removal.person_isolation(Utils.get_cv2_img_array(image_url), person['face'])
         # TODO - serialize image obj or .tolist() it
         self.log("sending to Herr paperdoll")
         start = time.time()
@@ -29,12 +28,7 @@ class PersonBolt(Bolt):
         while not paper_job.is_finished or paper_job.is_failed:
             time.sleep(0.5)
         self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
-        # if paper_job.is_failed:
-        #     raise SystemError("Paper-job has failed!")
-        #     # TODO - update someone that we got a man down !
-        # elif not paper_job.result:
-        #     elapsed = time.time()-start_time
-        #     raise SystemError("Paperdoll has returned empty results ({0} elapsed,timeout={1} )!".format(elapsed,paper_job.timeout))
+
         mask, labels = paper_job.result[:2]
         final_mask = pipeline.after_pd_conclusions(mask, labels)
         idx = 0

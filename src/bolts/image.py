@@ -16,30 +16,34 @@ class NewImageBolt(Bolt):
 
     def process(self, tup):
         page_url, image_url = tup.values
-        if image_url[:4] == "data":
-            return
+
         # check if page domain is in our white-list
         if not tldextract.extract(page_url).registered_domain in whitelist.all_white_lists:
             return
-        # check if image is already in some collection in our db
-        # I'm not sure we need to check if it in db.images, I think we check it in page_results.py
-        images_by_url = db.images.find_one({"image_urls": image_url})
-        if images_by_url:
-            return
 
-        images_obj_url = db.irrelevant_images.find_one({"image_urls": image_url})
-        if images_obj_url:
-            return
+        if image_url[:4] == "data":
+            image = Utils.data_url_to_cv2_img(image_url)
+            image_url = "data"
+            if image is None:
+                raise IOError("'data_url_to_cv2_img' has failed. Bad image!")
+        else:
+            images_by_url = db.images.find_one({"image_urls": image_url})
+            if images_by_url:
+                return
 
-        image_hash = page_results.get_hash_of_image_from_url(image_url)
+            images_obj_url = db.irrelevant_images.find_one({"image_urls": image_url})
+            if images_obj_url:
+                return
+            image = Utils.get_cv2_img_array(image_url)
+            if image is None:
+                raise IOError("'get_cv2_img_array' has failed. Bad image!")
+
+        image_hash = page_results.get_hash(image)
         images_obj_hash = db['images'].find_one_and_update({"image_hash": image_hash},
                                                            {'$addToSet': {'image_urls': image_url}})
         if images_obj_hash:
             return
-        # check if image is valid
-        image = Utils.get_cv2_img_array(image_url)
-        if image is None:
-            raise IOError("'get_cv2_img_array' has failed. Bad image!")
+
         # get faces and relevancy
         relevance = background_removal.image_is_relevant(image, use_caffe=False, image_url=image_url)
         image_dict = {'image_urls': [image_url], 'relevant': relevance.is_relevant, 'views': 1,
@@ -54,7 +58,7 @@ class NewImageBolt(Bolt):
                 person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
                              min(image.shape[0], 8 * h)]
                 person_args = {'face': face.tolist(), 'person_bb': person_bb, 'image_id': image_dict['image_id'],
-                               'image_url': image_url}
+                               'image': image}
                 idx += 1
                 people.append(person_args)
             image_dict['num_of_people'] = idx
