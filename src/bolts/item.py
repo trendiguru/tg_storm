@@ -25,14 +25,3 @@ class ItemBolt(Bolt):
         self.log("back from find_top_n after {0} secs..".format(time.time() - start))
         out_item['category'] = item['category']
         self.emit([out_item, person_id])
-
-
-    # def process(self, tup):
-    #     item, person_id = tup.values
-    #     out_item = {}
-    #     start = time.time()
-    #     out_item['fp'], out_item['similar_results'] = 1, 2
-    #     time.sleep(20)
-    #     self.log("back from find_top_n after {0} secs..".format(time.time() - start))
-    #     out_item['category'] = item['category']
-    #     self.emit([out_item, person_id])
