@@ -11,9 +11,6 @@ from trendi import whitelist, page_results, Utils, background_removal
 
 class NewImageBolt(Bolt):
 
-    # auto_ack = False
-    auto_fail = False
-
     def initialize(self, conf, ctx):
         self.db = db
 
@@ -89,7 +86,7 @@ class MergePeople(Bolt):
                                                                              image_id,
                                                                              self.bucket[image_id]['image_obj']['num_of_people']))
             if self.bucket[image_id]['person_stack'] == self.bucket[image_id]['image_obj']['num_of_people']:
-                insert_result = db.storm_test.insert_one(self.bucket[image_id]['image_obj'])
+                insert_result = db.images.insert_one(self.bucket[image_id]['image_obj'])
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
                 if not insert_result.acknowledged:
