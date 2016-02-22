@@ -58,7 +58,7 @@ class NewImageBolt(Bolt):
                 person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
                              min(image.shape[0], 8 * h)]
                 person_args = {'face': face.tolist(), 'person_bb': person_bb, 'image_id': image_dict['image_id'],
-                               'image': image}
+                               'image': image.tolist()}
                 idx += 1
                 people.append(person_args)
             image_dict['num_of_people'] = idx

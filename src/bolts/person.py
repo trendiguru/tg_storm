@@ -17,7 +17,7 @@ class PersonBolt(Bolt):
     def process(self, tup):
         self.log("got into person-bolt! :)")
         image_id = tup.values[0].pop('image_id')
-        image = tup.values[0].pop('image')
+        image = np.array(tup.values[0].pop('image'), dtype=np.uint8)
         person = tup.values[0]
         person['_id'] = str(bson.ObjectId())
         person['items'] = []
