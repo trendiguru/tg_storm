@@ -16,6 +16,8 @@ class NewImageBolt(Bolt):
 
     def process(self, tup):
         page_url, image_url = tup.values
+        if image_url[:4] == "data":
+            return
         # check if page domain is in our white-list
         if not tldextract.extract(page_url).registered_domain in whitelist.all_white_lists:
             return
