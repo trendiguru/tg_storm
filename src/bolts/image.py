@@ -25,7 +25,8 @@ class NewImageBolt(Bolt):
             image = Utils.data_url_to_cv2_img(image_url)
             image_url = "data"
             if image is None:
-                raise IOError("'data_url_to_cv2_img' has failed. Bad image!")
+                self.log("'data_url_to_cv2_img' has failed. Bad image!")
+                return
         else:
             images_by_url = db.images.find_one({"image_urls": image_url})
             if images_by_url:
@@ -34,9 +35,11 @@ class NewImageBolt(Bolt):
             images_obj_url = db.irrelevant_images.find_one({"image_urls": image_url})
             if images_obj_url:
                 return
+
             image = Utils.get_cv2_img_array(image_url)
             if image is None:
-                raise IOError("'get_cv2_img_array' has failed. Bad image!")
+                self.log("'get_cv2_img_array' has failed. Bad image!")
+                return
 
         image_hash = page_results.get_hash(image)
         images_obj_hash = db['images'].find_one_and_update({"image_hash": image_hash},
