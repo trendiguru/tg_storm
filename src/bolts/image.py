@@ -4,9 +4,11 @@ from streamparse.bolt import Bolt
 import tldextract
 import datetime
 import bson
-
+import pickle
 from trendi.constants import db
 from trendi import whitelist, page_results, Utils, background_removal
+WHITELIST_PATH = '/home/www-data/whitelist.txt'
+
 
 
 class NewImageBolt(Bolt):
@@ -18,9 +20,12 @@ class NewImageBolt(Bolt):
         page_url, image_url = tup.values
 
         # check if page domain is in our white-list
-        if not tldextract.extract(page_url).registered_domain in whitelist.all_white_lists:
+        f = open(WHITELIST_PATH, 'r')
+        whitelist = pickle.load(f)
+        if not tldextract.extract(page_url).registered_domain in whitelist:
+            f.close()
             return
-
+        f.close()
         if image_url[:4] == "data":
             image = Utils.data_url_to_cv2_img(image_url)
             image_url = "data"
