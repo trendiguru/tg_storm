@@ -10,7 +10,6 @@ from trendi import whitelist, page_results, Utils, background_removal
 WHITELIST_PATH = '/home/www-data/whitelist.txt'
 
 
-
 class NewImageBolt(Bolt):
 
     def initialize(self, conf, ctx):
@@ -20,12 +19,9 @@ class NewImageBolt(Bolt):
         page_url, image_url = tup.values
 
         # check if page domain is in our white-list
-        f = open(WHITELIST_PATH, 'r')
-        whitelist = pickle.load(f)
-        if not tldextract.extract(page_url).registered_domain in whitelist:
-            f.close()
+        if not db.whitelist.find_one({'domain': tldextract.extract(page_url).registered_domain}):
             return
-        f.close()
+
         if image_url[:4] == "data":
             image = Utils.data_url_to_cv2_img(image_url)
             image_url = "data"
