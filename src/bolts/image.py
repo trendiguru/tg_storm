@@ -4,22 +4,26 @@ from streamparse.bolt import Bolt
 import tldextract
 import datetime
 import bson
+import time
 import pickle
-from trendi.constants import db
+from trendi import monitoring
+from trendi.constants import db, manual_gender_domains
 from trendi import whitelist, page_results, Utils, background_removal
-WHITELIST_PATH = '/home/www-data/whitelist.txt'
-
+GENDERATOR_PATH = 'https://extremeli.trendi.guru/api/genderator'
 
 class NewImageBolt(Bolt):
 
     def initialize(self, conf, ctx):
         self.db = db
+        self.stats = {'massege': "Hey! there's a new image waiting in " + GENDERATOR_PATH + ' to be gender-classified !',
+                      'date': time.ctime()}
 
     def process(self, tup):
         page_url, image_url = tup.values
 
         # check if page domain is in our white-list
-        if not db.whitelist.find_one({'domain': tldextract.extract(page_url).registered_domain}):
+        domain = tldextract.extract(page_url).registered_domain
+        if not db.whitelist.find_one({'domain': domain}):
             return
 
         if image_url[:4] == "data":
@@ -61,16 +65,31 @@ class NewImageBolt(Bolt):
                 x, y, w, h = face
                 person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
                              min(image.shape[0], 8 * h)]
-                person_args = {'face': face.tolist(), 'person_bb': person_bb, 'image_id': image_dict['image_id'],
-                               'image': image.tolist()}
-                idx += 1
-                people.append(person_args)
+                if domain in manual_gender_domains:
+                    person_id = db.genderator.insert_one({'url': image_url, 'face': face, 'status': 'fresh'})
+                    monitoring.email(self.stats, 'New image to genderize!', ['nadav@trendiguru.com'])
+                    pers = db.genderator.find_one({'_id': person_id})
+                    while pers['status'] != 'done':
+                        time.sleep(1)
+                        pers = db.genderator.find_one({'_id': person_id})
+                    gender = pers['gender']
+                    db.genderator.delete_one({'_id': person_id})
+                else:
+                    gender = 'female'
+                if gender != "not_relevant":
+                    person_args = {'face': face.tolist(), 'person_bb': person_bb, 'image_id': image_dict['image_id'],
+                                   'image': image.tolist(), 'gender': gender}
+                    idx += 1
+                    people.append(person_args)
             image_dict['num_of_people'] = idx
             self.log("gonna emit {0} as image_id".format(image_dict['image_id']))
             self.emit([image_dict, image_dict['image_id']], stream='image_obj')
             self.log('gonna emit {idx} people from {id}'.format(idx=idx, id=image_dict['image_id']))
             for person in people:
                 self.emit([person], stream='person_args')
+            if not idx:
+                db.irrelevant_images.insert_one(image_dict)
+                self.log('{url} stored as irrelevant, wrong face was found'.format(url=image_url))
         else:
             db.irrelevant_images.insert_one(image_dict)
             self.log('{url} stored as irrelevant'.format(url=image_url))
