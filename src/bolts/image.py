@@ -75,7 +75,7 @@ class NewImageBolt(Bolt):
                     gender = pers['gender']
                     db.genderator.delete_one({'_id': person_id})
                 else:
-                    gender = 'female'
+                    gender = 'Female'
                 if gender != "not_relevant":
                     person_args = {'face': face.tolist(), 'person_bb': person_bb, 'image_id': image_dict['image_id'],
                                    'image': image.tolist(), 'gender': gender}
