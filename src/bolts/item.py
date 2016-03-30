@@ -4,7 +4,7 @@ from streamparse.bolt import Bolt
 import numpy as np
 import time
 from trendi import find_similar_mongo
-from trendi.constants import db, products_collection_names
+from trendi.constants import db, products_per_site
 
 
 class ItemBolt(Bolt):
@@ -20,15 +20,13 @@ class ItemBolt(Bolt):
         item['image'] = np.array(item['image'], dtype=np.uint8)
         out_item = {}
         start = time.time()
-        fp = []
-        for coll in products_collection_names:
+        if domain in products_per_site.keys():
+            coll = products_per_site[domain]
             prod = coll + '_' + gender
-            fp, similar_results = find_similar_mongo.find_top_n_results(item['image'],
-                                                                        item['mask'],
-                                                                        100, item['category'],
-                                                                        prod, fingerprint=fp)
-            out_item['similar_results'].append({coll: similar_results})
-        out_item['fp'] = fp
+        else:
+            prod = "ShopStyle_" + gender
+        out_item['fp'], out_item['similar_results'] = find_similar_mongo.find_top_n_results(item['image'],
+                                                                    item['mask'], 100, item['category'], prod)
         self.log("back from find_top_n after {0} secs..".format(time.time() - start))
         out_item['category'] = item['category']
         self.emit([out_item, person_id])
