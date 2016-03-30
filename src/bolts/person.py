@@ -35,6 +35,8 @@ class PersonBolt(Bolt):
         items = []
         for num in np.unique(final_mask):
             category = list(labels.keys())[list(labels.values()).index(num)]
+            if person['gender'] == 'Male':
+                category = constants.paperdoll_paperdoll_men[category]
             if category in constants.paperdoll_shopstyle_women.keys():
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
                 item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist()}
