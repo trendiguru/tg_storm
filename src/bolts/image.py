@@ -70,8 +70,8 @@ class NewImageBolt(Bolt):
                     monitoring.email(self.stats, 'New image to genderize!', ['nadav@trendiguru.com'])
                     pers = db.genderator.find_one({'_id': person_id.inserted_id})
                     while pers['status'] != 'done':
-                        time.sleep(1)
-                        self.log('still no answer...')
+                        time.sleep(2)
+                        self.log(pers)
                         pers = db.genderator.find_one({'_id': person_id.inserted_id})
                     gender = pers['gender']
                     db.genderator.delete_one({'_id': person_id})
