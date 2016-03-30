@@ -9,7 +9,7 @@ import pickle
 from trendi import monitoring
 from trendi.constants import db, manual_gender_domains
 from trendi import whitelist, page_results, Utils, background_removal
-GENDERATOR_PATH = 'https://extremeli.trendi.guru/api/genderator'
+GENDERATOR_PATH = 'http://extremeli.trendi.guru/demo/genderator'
 
 class NewImageBolt(Bolt):
 
@@ -71,7 +71,7 @@ class NewImageBolt(Bolt):
                     pers = db.genderator.find_one({'_id': person_id})
                     while pers['status'] != 'done':
                         time.sleep(1)
-                        pers = db.genderator.find_one({'_id': person_id})
+                        pers = db.genderator.find_one({'_id': person_id.inserted_id})
                     gender = pers['gender']
                     db.genderator.delete_one({'_id': person_id})
                 else:
