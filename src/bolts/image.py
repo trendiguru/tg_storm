@@ -68,7 +68,7 @@ class NewImageBolt(Bolt):
                 if domain in manual_gender_domains:
                     person_id = db.genderator.insert_one({'url': image_url, 'face': face.tolist(), 'status': 'fresh'})
                     monitoring.email(self.stats, 'New image to genderize!', ['nadav@trendiguru.com'])
-                    pers = db.genderator.find_one({'_id': person_id})
+                    pers = db.genderator.find_one({'_id': person_id.inserted_id})
                     while pers['status'] != 'done':
                         time.sleep(1)
                         pers = db.genderator.find_one({'_id': person_id.inserted_id})
