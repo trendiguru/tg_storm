@@ -71,6 +71,7 @@ class NewImageBolt(Bolt):
                     pers = db.genderator.find_one({'_id': person_id.inserted_id})
                     while pers['status'] != 'done':
                         time.sleep(1)
+                        self.log('still no answer...')
                         pers = db.genderator.find_one({'_id': person_id.inserted_id})
                     gender = pers['gender']
                     db.genderator.delete_one({'_id': person_id})
