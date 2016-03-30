@@ -78,7 +78,7 @@ class NewImageBolt(Bolt):
                     gender = 'Female'
                 if gender != "not_relevant":
                     person_args = {'face': face.tolist(), 'person_bb': person_bb, 'image_id': image_dict['image_id'],
-                                   'image': image.tolist(), 'gender': gender}
+                                   'image': image.tolist(), 'gender': gender, 'domain': domain}
                     idx += 1
                     people.append(person_args)
             image_dict['num_of_people'] = idx

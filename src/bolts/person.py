@@ -39,7 +39,8 @@ class PersonBolt(Bolt):
                 category = constants.paperdoll_paperdoll_men[category]
             if category in constants.paperdoll_shopstyle_women.keys():
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
-                item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist()}
+                item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist(),
+                             'domain': person['domain'], 'gender': person['gender']}
                 items.append(item_args)
                 idx += 1
         person['num_of_items'] = idx

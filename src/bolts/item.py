@@ -1,5 +1,4 @@
 
-
 from __future__ import absolute_import, print_function, unicode_literals
 from streamparse.bolt import Bolt
 import numpy as np
@@ -16,6 +15,7 @@ class ItemBolt(Bolt):
     def process(self, tup):
         item, person_id = tup.values
         gender = item['gender']
+        domain = item['domain']
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
         out_item = {}
