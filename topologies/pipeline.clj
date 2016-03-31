@@ -19,7 +19,7 @@
           "bolts.image.NewImageBolt"
           {"person_args" ["person"]
            "image_obj" ["image_obj", "image_id"]}
-          :p 1
+          :p 10
           )
 
     "person-bolt" (python-bolt-spec
