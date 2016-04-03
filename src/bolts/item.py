@@ -14,10 +14,13 @@ class ItemBolt(Bolt):
 
     def process(self, tup):
         item, person_id = tup.values
-        gender = item['gender']
         domain = item['domain']
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
+        if 'gender' in item.keys():
+            gender = item['gender']
+        else:
+            gender = "Female"
         out_item = {}
         start = time.time()
         if domain in products_per_site.keys():
@@ -26,7 +29,8 @@ class ItemBolt(Bolt):
         else:
             prod = "ShopStyle_" + gender
         out_item['fp'], out_item['similar_results'] = find_similar_mongo.find_top_n_results(item['image'],
-                                                                    item['mask'], 100, item['category'], prod)
+                                                                                            item['mask'], 100,
+                                                                                            item['category'], prod)
         self.log("back from find_top_n after {0} secs..".format(time.time() - start))
         out_item['category'] = item['category']
         self.emit([out_item, person_id])
