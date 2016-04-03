@@ -70,7 +70,8 @@ class NewImageBolt(Bolt):
                     db.genderator.insert_one({'url': image_url, 'face': face.tolist(), 'status': 'fresh',
                                              'person_id': person_id})
                     monitoring.email(self.stats, 'New image to genderize!', ['nadav@trendiguru.com',
-                                                                             'lior@trendiguru.com'])
+                                                                             'lior@trendiguru.com',
+                                                                             'kyle@trendiguru.com'])
                     pers = db.genderator.find_one({'person_id': person_id})
                     while pers['status'] != 'done':
                         time.sleep(2)
