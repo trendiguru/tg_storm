@@ -63,6 +63,7 @@ class NewImageBolt(Bolt):
             idx = 0
             for face in relevance.faces:
                 x, y, w, h = face
+                isolated_image = background_removal.person_isolation(image, face)
                 person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
                              min(image.shape[0], 8 * h)]
                 if domain in manual_gender_domains:
@@ -82,12 +83,12 @@ class NewImageBolt(Bolt):
                     db.genderator.delete_one({'person_id': person_id})
                     if gender != "not_relevant":
                         person_args = {'face': face.tolist(), 'person_bb': person_bb, 'image_id': image_dict['image_id'],
-                                       'image': image.tolist(), 'gender': gender, 'domain': domain}
+                                       'image': isolated_image.tolist(), 'gender': gender, 'domain': domain}
                         people.append(person_args)
                         idx += 1
                 else:
                     person_args = {'face': face.tolist(), 'person_bb': person_bb, 'image_id': image_dict['image_id'],
-                                   'image': image.tolist(), 'domain': domain}
+                                   'image': isolated_image.tolist(), 'domain': domain}
                     idx += 1
                     people.append(person_args)
             image_dict['num_of_people'] = idx
