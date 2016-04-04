@@ -67,10 +67,10 @@ class NewImageBolt(Bolt):
                              min(image.shape[0], 8 * h)]
                 if domain in manual_gender_domains:
                     person_id = str(bson.ObjectId())
-                    if not db.genderator.count():
-                        monitoring.email(self.stats, 'New image to genderize!', ['nadav@trendiguru.com',
-                                                                                 'lior@trendiguru.com',
-                                                                                 'kyle@trendiguru.com'])
+                    if db.genderator.count() > 5:
+                        monitoring.email(self.stats, 'New image to genderize!', ['nadav@trendiguru.com'])
+                                                                                 # 'lior@trendiguru.com',
+                                                                                 # 'kyle@trendiguru.com'])
                     db.genderator.insert_one({'url': image_url, 'face': face.tolist(), 'status': 'fresh',
                                              'person_id': person_id})
                     pers = db.genderator.find_one({'person_id': person_id})
