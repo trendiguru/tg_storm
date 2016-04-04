@@ -21,6 +21,11 @@ class NewImageBolt(Bolt):
     def process(self, tup):
         page_url, image_url = tup.values
 
+        # check if image is in-process by url
+        tempo = db.iip.find_one({'image_url': image_url})
+        if tempo and time.time()-tempo['insert_time'] < 3600:
+            return
+
         # check if page domain is in our white-list
         domain = tldextract.extract(page_url).registered_domain
         if not db.whitelist.find_one({'domain': domain}):
@@ -58,6 +63,7 @@ class NewImageBolt(Bolt):
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
                       'people': [], 'image_id': str(bson.ObjectId())}
         if relevance.is_relevant:
+            db.iip.insert_one({'image_url': image_url, 'insert_time': time.time()})
             # There are faces
             people = []
             idx = 0
@@ -99,6 +105,7 @@ class NewImageBolt(Bolt):
                 self.emit([person], stream='person_args')
             if not idx:
                 db.irrelevant_images.insert_one(image_dict)
+                db.iip.delete_one({'image_url': image_url})
                 self.log('{url} stored as irrelevant, wrong face was found'.format(url=image_url))
         else:
             db.irrelevant_images.insert_one(image_dict)
@@ -125,7 +132,9 @@ class MergePeople(Bolt):
                                                                              image_id,
                                                                              self.bucket[image_id]['image_obj']['num_of_people']))
             if self.bucket[image_id]['person_stack'] == self.bucket[image_id]['image_obj']['num_of_people']:
-                insert_result = db.images.insert_one(self.bucket[image_id]['image_obj'])
+                image_obj = self.bucket[image_id]['image_obj']
+                insert_result = db.images.insert_one(image_obj)
+                db.iip.delete_one({'image_url': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
                 if not insert_result.acknowledged:
