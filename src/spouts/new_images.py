@@ -20,6 +20,7 @@ class NewImageSpout(Spout):
         self.emit([page_url, image_url], tup_id=image_url)
 
     def fail(self, tup_id):
+        self.log("OMG {0} FAILED".format(tup_id))
         deleted = db.iip.delete_one({'image_url': tup_id}).deleted_count
         var = deleted * 'and have' + (1-deleted) * 'but have not'
         self.log("OMG {0} FAILED {1} been deleted from db.iip".format(tup_id, var))
