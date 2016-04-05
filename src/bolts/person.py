@@ -29,7 +29,7 @@ class PersonBolt(Bolt):
         while not paper_job.is_finished or paper_job.is_failed:
             time.sleep(0.5)
         if paper_job.is_failed:
-            return
+            self.fail(tup)
         self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
 
         mask, labels = paper_job.result[:2]
