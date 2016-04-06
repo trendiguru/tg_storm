@@ -5,11 +5,11 @@ import tldextract
 import datetime
 import bson
 import time
-import pickle
 from trendi import monitoring
 from trendi.constants import db, manual_gender_domains
 from trendi import whitelist, page_results, Utils, background_removal
 GENDERATOR_PATH = 'http://extremeli.trendi.guru/demo/genderator'
+
 
 class NewImageBolt(Bolt):
 
@@ -134,6 +134,7 @@ class MergePeople(Bolt):
                                                                              self.bucket[image_id]['image_obj']['num_of_people']))
             if self.bucket[image_id]['person_stack'] == self.bucket[image_id]['image_obj']['num_of_people']:
                 image_obj = self.bucket[image_id]['image_obj']
+                image_obj['saved_date'] = datetime.datetime.strptime(image_obj['saved_date'], "%Y-%m-%d %H:%M:%S.%f")
                 insert_result = db.images.insert_one(image_obj)
                 db.iip.delete_one({'image_url': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
