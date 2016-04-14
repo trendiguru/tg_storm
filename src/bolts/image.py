@@ -63,7 +63,7 @@ class NewImageBolt(Bolt):
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
                       'people': [], 'image_id': str(bson.ObjectId())}
         if relevance.is_relevant:
-            db.iip.insert_one({'image_url': image_url, 'insert_time': time.time()})
+            db.iip.insert_one({'image_url': image_url, 'insert_time': datetime.datetime.utcnow()})
             # There are faces
             people = []
             idx = 0
