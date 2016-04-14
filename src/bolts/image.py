@@ -23,7 +23,7 @@ class NewImageBolt(Bolt):
 
         # check if image is in-process by url
         tempo = db.iip.find_one({'image_url': image_url})
-        if tempo and time.time()-tempo['insert_time'] < 3600:
+        if tempo:
             return
 
         # check if page domain is in our white-list
