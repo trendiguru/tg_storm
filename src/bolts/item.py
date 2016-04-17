@@ -25,12 +25,13 @@ class ItemBolt(Bolt):
         start = time.time()
         if domain in products_per_site.keys():
             coll = products_per_site[domain]
-            prod = coll + '_' + gender
         else:
-            prod = "ShopStyle_" + gender
-        out_item['fp'], out_item['similar_results'] = find_similar_mongo.find_top_n_results(item['image'],
-                                                                                            item['mask'], 100,
-                                                                                            item['category'], prod)
+            coll = products_per_site['default']
+        prod = coll + '_' + gender
+        out_item['fp'], out_item['similar_results'][coll] = find_similar_mongo.find_top_n_results(item['image'],
+                                                                                                  item['mask'], 100,
+                                                                                                  item['category'],
+                                                                                                  prod)
         self.log("back from find_top_n after {0} secs..".format(time.time() - start))
         out_item['category'] = item['category']
         self.emit([out_item, person_id])
