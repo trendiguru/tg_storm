@@ -9,6 +9,7 @@ from trendi import monitoring
 from trendi.constants import db, manual_gender_domains
 from trendi import whitelist, page_results, Utils, background_removal
 GENDERATOR_PATH = 'http://extremeli.trendi.guru/demo/genderator'
+YONATANS_PATH = 'http://extremeli.trendi.guru/demo/yonatan_gender'
 
 
 class NewImageBolt(Bolt):
@@ -17,6 +18,8 @@ class NewImageBolt(Bolt):
         self.db = db
         self.stats = {'massege': "Hey! there's a new image waiting in " + GENDERATOR_PATH + ' to be gender-classified !',
                       'date': time.ctime()}
+        self.yonatans = {'message': "Hey Yonatan! there's a new image waiting in " + YONATANS_PATH +
+                                    ' to be gender-classified !', 'date': time.ctime()}
 
     def process(self, tup):
         page_url, image_url = tup.values
@@ -72,6 +75,10 @@ class NewImageBolt(Bolt):
                 isolated_image = background_removal.person_isolation(image, face)
                 person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
                              min(image.shape[0], 8 * h)]
+                # INSERT TO YONATAN'S COLLECTION
+                db.yonatan_gender.insert_one({'url': image_url, 'face': face.tolist(), 'status': 'fresh',
+                                             'person_id': str(bson.ObjectId())})
+                monitoring.email(self.yonatans, 'New image to genderize!', ['yonatanguy@gmail.com'])
                 if domain in manual_gender_domains:
                     person_id = str(bson.ObjectId())
                     if not db.genderator.count():
