@@ -18,7 +18,7 @@ class NewImageBolt(Bolt):
         self.db = db
         self.stats = {'massege': "Hey! there's a new image waiting in " + GENDERATOR_PATH + ' to be gender-classified !',
                       'date': time.ctime()}
-        self.yonatans = {'message': "Hey Yonatan! there's a new image waiting in " + YONATANS_PATH +
+        self.yonatans = {'massege': "Hey Yonatan! there's a new image waiting in " + YONATANS_PATH +
                                     ' to be gender-classified !', 'date': time.ctime()}
 
     def process(self, tup):
