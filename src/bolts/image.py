@@ -58,7 +58,7 @@ class NewImageBolt(Bolt):
             person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
                          min(image.shape[0], 8 * h)]
             # INSERT TO YONATAN'S COLLECTION
-            db.yonatan_gender.insert_one({'url': image_url, 'face': face.tolist(), 'status': 'fresh',
+            db.yonatan_gender.insert_one({'url': image_url, 'face': face, 'status': 'fresh',
                                          'person_id': str(bson.ObjectId())})
             monitoring.email(self.yonatans, 'New image to genderize!', ['yonatanguy@gmail.com'])
             if 'gender' in person.keys():
@@ -67,7 +67,7 @@ class NewImageBolt(Bolt):
                 gender = 'Female'
 
             if gender != "not_relevant":
-                person_args = {'face': face.tolist(), 'person_bb': person_bb, 'image_id': image_dict['image_id'],
+                person_args = {'face': face, 'person_bb': person_bb, 'image_id': image_dict['image_id'],
                                'image': isolated_image.tolist(), 'gender': gender, 'domain': domain}
                 people_to_emit.append(person_args)
                 idx += 1
