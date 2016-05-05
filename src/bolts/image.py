@@ -48,7 +48,7 @@ class NewImageBolt(Bolt):
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
                       'people': gender_obj['people'], 'image_id': str(bson.ObjectId())}
-        db.iip.insert_one({'image_url': image_url, 'insert_time': datetime.datetime.utcnow()})
+        # db.iip.insert_one({'image_url': image_url, 'insert_time': datetime.datetime.utcnow()})
         idx = 0
         people_to_emit = []
         for person in image_dict['people']:
