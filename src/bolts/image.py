@@ -26,29 +26,17 @@ class NewImageBolt(Bolt):
 
         domain = tldextract.extract(page_url).registered_domain
 
-        if image_url[:4] == "data":
-            image = Utils.data_url_to_cv2_img(image_url)
-            image_url = "data"
-            if image is None:
-                self.log("'data_url_to_cv2_img' has failed. Bad image!")
-                return
-        else:
-            image = Utils.get_cv2_img_array(image_url)
-            if image is None:
-                self.log("'get_cv2_img_array' has failed. Bad image!")
-                return
+        image = Utils.get_cv2_img_array(image_url)
+        if image is None:
+            self.log("'get_cv2_img_array' has failed. Bad image!")
+            return
 
         image_hash = page_results.get_hash(image)
-        images_obj_hash = db['images'].find_one_and_update({"image_hash": image_hash},
-                                                           {'$addToSet': {'image_urls': image_url}})
-        if images_obj_hash:
-            return
 
         gender_obj = db.genderator.find_one({'image_url': image_url})
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
                       'people': gender_obj['people'], 'image_id': str(bson.ObjectId())}
-        # db.iip.insert_one({'image_url': image_url, 'insert_time': datetime.datetime.utcnow()})
         idx = 0
         people_to_emit = []
         for person in image_dict['people']:
@@ -58,19 +46,19 @@ class NewImageBolt(Bolt):
             person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
                          min(image.shape[0], 8 * h)]
             # INSERT TO YONATAN'S COLLECTION
-            db.yonatan_gender.insert_one({'url': image_url, 'face': face, 'status': 'fresh',
-                                         'person_id': str(bson.ObjectId())})
-            monitoring.email(self.yonatans, 'New image to genderize!', ['yonatanguy@gmail.com'])
-            if 'gender' in person.keys():
-                gender = person['gender']
-            else:
-                gender = 'Female'
-
-            if gender != "not_relevant":
-                person_args = {'face': face, 'person_bb': person_bb, 'image_id': image_dict['image_id'],
-                               'image': isolated_image.tolist(), 'gender': gender, 'domain': domain}
-                people_to_emit.append(person_args)
-                idx += 1
+            # db.yonatan_gender.insert_one({'url': image_url, 'face': face, 'status': 'fresh',
+            #                              'person_id': str(bson.ObjectId())})
+            # monitoring.email(self.yonatans, 'New image to genderize!', ['yonatanguy@gmail.com'])
+            # if 'gender' in person.keys():
+            #     gender = person['gender']
+            # else:
+            #     gender = 'Female'
+            #
+            # if gender != "not_relevant":
+            person_args = {'face': face, 'person_bb': person_bb, 'image_id': image_dict['image_id'],
+                           'image': isolated_image.tolist(), 'gender': person['gender'], 'domain': domain}
+            people_to_emit.append(person_args)
+            idx += 1
 
         db.genderator.delete_one({'image_url': image_url})
         image_dict['num_of_people'] = idx
