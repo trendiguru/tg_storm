@@ -57,8 +57,9 @@ class NewImageBolt(Bolt):
             # if gender != "not_relevant":
             person_args = {'face': face, 'person_bb': person_bb, 'image_id': image_dict['image_id'],
                            'image': isolated_image.tolist(), 'gender': person['gender'], 'domain': domain}
-            people_to_emit.append(person_args)
-            idx += 1
+            if person['gender'] is not None:
+                people_to_emit.append(person_args)
+                idx += 1
 
         db.genderator.delete_one({'image_url': image_url})
         image_dict['num_of_people'] = idx
