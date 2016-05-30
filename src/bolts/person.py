@@ -43,16 +43,12 @@ class PersonBolt(Bolt):
             pd_category = list(labels.keys())[list(labels.values()).index(num)]
             if pd_category in constants.paperdoll_relevant_categories:
                 item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
-                if 'gender' in person.keys():
-                    if person['gender'] == 'Male':
-                        category = constants.paperdoll_paperdoll_men[pd_category]
-                    else:
-                        category = pd_category
-                    item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist(),
-                                 'domain': person['domain'], 'gender': person['gender']}
+                if person['gender'] == 'Male':
+                    category = constants.paperdoll_paperdoll_men[pd_category]
                 else:
-                    item_args = {'mask': item_mask.tolist(), 'category': pd_category, 'image': image.tolist(),
-                                 'domain': person['domain']}
+                    category = pd_category
+                item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist(),
+                             'domain': person['domain'], 'gender': person['gender']}
                 items.append(item_args)
                 idx += 1
         person['num_of_items'] = idx
