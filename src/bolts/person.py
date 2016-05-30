@@ -36,7 +36,7 @@ class PersonBolt(Bolt):
         self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
 
         mask, labels = paper_job.result[:2]
-        final_mask = pipeline.after_pd_conclusions(mask, labels)
+        final_mask = pipeline.after_pd_conclusions(mask, labels, person['face'])
         idx = 0
         items = []
         for num in np.unique(final_mask):
