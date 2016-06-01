@@ -29,7 +29,7 @@ class PersonBolt(Bolt):
         start = time.time()
         while not paper_job.is_finished or paper_job.is_failed:
             time.sleep(0.5)
-            if time.time()-start > 300:
+            if time.time()-start > 500:
                 self.fail(tup)
         if paper_job.is_failed:
             self.fail(tup)
