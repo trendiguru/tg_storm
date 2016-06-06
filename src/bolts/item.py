@@ -27,8 +27,9 @@ class ItemBolt(Bolt):
             coll = products_per_site[domain]
             prod = coll + '_' + gender
         else:
-            prod = "ShopStyle_" + gender
-        out_item['fp'], out_item['similar_results'][prod] = find_similar_mongo.find_top_n_results(item['image'],
+            coll = products_per_site['default']
+            prod = coll + gender
+        out_item['fp'], out_item['similar_results'][coll] = find_similar_mongo.find_top_n_results(item['image'],
                                                                                                   item['mask'], 100,
                                                                                                   item['category'],
                                                                                                   prod)
