@@ -28,7 +28,7 @@ class ItemBolt(Bolt):
             prod = coll + '_' + gender
         else:
             coll = products_per_site['default']
-            prod = coll + gender
+            prod = coll + '_' + gender
         out_item['fp'], out_item['similar_results'][coll] = find_similar_mongo.find_top_n_results(item['image'],
                                                                                                   item['mask'], 100,
                                                                                                   item['category'],
