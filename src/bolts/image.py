@@ -36,7 +36,7 @@ class NewImageBolt(Bolt):
         gender_obj = db.genderator.find_one({'image_url': image_url})
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
-                      'people': gender_obj['people'], 'image_id': str(bson.ObjectId())}
+                      'people': gender_obj['people'], 'image_id': str(bson.ObjectId()), 'domain': domain}
         db.permanent_images.insert_one({'image_url': image_url})
         idx = 0
         people_to_emit = []

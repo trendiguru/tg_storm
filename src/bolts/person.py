@@ -29,7 +29,7 @@ class PersonBolt(Bolt):
         start = time.time()
         while not paper_job.is_finished or paper_job.is_failed:
             time.sleep(0.5)
-            if time.time()-start > 500:
+            if time.time()-start > 1000:
                 self.fail(tup)
         if paper_job.is_failed:
             self.fail(tup)
@@ -52,7 +52,7 @@ class PersonBolt(Bolt):
                 items.append(item_args)
                 idx += 1
         person['num_of_items'] = idx
-        id1 = self.emit([person, person['_id'], image_id], stream='person_obj')
+        id1 = self.emit([person.pop('domain'), person['_id'], image_id], stream='person_obj')
         self.log("emitted person {0} to merge, task id is {1}".format(person['_id'], id1))
         for item in items:
             self.log("emitting {0}".format(item['category']))
