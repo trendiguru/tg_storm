@@ -37,6 +37,7 @@ class NewImageBolt(Bolt):
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
                       'people': gender_obj['people'], 'image_id': str(bson.ObjectId())}
+        db.permanent_images.insert_one({'image_url': image_url})
         idx = 0
         people_to_emit = []
         for person in image_dict['people']:
@@ -87,6 +88,7 @@ class MergePeople(Bolt):
                 image_obj = self.bucket[image_id]['image_obj']
                 image_obj['saved_date'] = datetime.datetime.strptime(image_obj['saved_date'], "%Y-%m-%d %H:%M:%S.%f")
                 insert_result = db.images.insert_one(image_obj)
+                db.permanent_images.insert_one(image_obj)
                 db.iip.delete_one({'image_url': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
