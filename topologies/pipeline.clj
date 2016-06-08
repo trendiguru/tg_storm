@@ -19,7 +19,7 @@
           "bolts.image.NewImageBolt"
           {"person_args" ["person"]
            "image_obj" ["image_obj", "image_id"]}
-          :p 10
+          :p 5
           )
 
     "person-bolt" (python-bolt-spec
@@ -36,7 +36,7 @@
           {["person-bolt" "item_args"] :shuffle}
           "bolts.item.ItemBolt"
           ["item", "person_id"]
-          :p 15
+          :p 5
           )
 
     "merge-items-bolt" (python-bolt-spec
@@ -45,7 +45,7 @@
             "item-bolt" ["person_id"]}
           "bolts.person.MergeItems"
           ["person", "image_id"]
-          :p 1
+          :p 2
           )
 
     "merge-people-bolt" (python-bolt-spec
@@ -54,7 +54,7 @@
             "merge-items-bolt" ["image_id"]}
           "bolts.image.MergePeople"
           []
-          :p 1
+          :p 2
           )
     }
   ]
