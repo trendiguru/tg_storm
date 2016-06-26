@@ -26,7 +26,6 @@ class PersonBolt(Bolt):
         self.log("sending to Herr paperdoll")
         start = time.time()
         paper_job = paperdoll_parse_enqueue.paperdoll_enqueue(image, str(person['_id']))
-        start = time.time()
         while not paper_job.is_finished or paper_job.is_failed:
             time.sleep(0.5)
             if time.time()-start > 1000:
