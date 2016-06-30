@@ -26,7 +26,11 @@ class PersonBolt(Bolt):
 
         self.log("sending to Herr paperdoll")
         start = time.time()
-        paper = pd_falcon_client.pd(image)
+        try:
+            paper = pd_falcon_client.pd(image)
+        except Exception as e:
+            self.log(e)
+            self.fail(tup)
         # paper_job = paperdoll_parse_enqueue.paperdoll_enqueue(image, str(person['_id']))
         # while not paper_job.is_finished or paper_job.is_failed:
         #     time.sleep(0.5)
