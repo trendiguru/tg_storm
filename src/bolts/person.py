@@ -31,6 +31,7 @@ class PersonBolt(Bolt):
         except Exception as e:
             self.log(e)
             self.fail(tup)
+            # return
         # paper_job = paperdoll_parse_enqueue.paperdoll_enqueue(image, str(person['_id']))
         # while not paper_job.is_finished or paper_job.is_failed:
         #     time.sleep(0.5)
@@ -39,7 +40,7 @@ class PersonBolt(Bolt):
         # if paper_job.is_failed:
         #     self.fail(tup)
         self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
-        if paper['success']:
+        if 'success' in paper and paper['success']:
             mask = paper['mask']
             labels = paper['label_dict']
         else:
