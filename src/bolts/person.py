@@ -26,7 +26,7 @@ class PersonBolt(Bolt):
 
         self.log("sending to Herr paperdoll")
         start = time.time()
-        paper_job = pd_falcon_client.pd(image)
+        paper = pd_falcon_client.pd(image)
         # paper_job = paperdoll_parse_enqueue.paperdoll_enqueue(image, str(person['_id']))
         # while not paper_job.is_finished or paper_job.is_failed:
         #     time.sleep(0.5)
@@ -35,8 +35,11 @@ class PersonBolt(Bolt):
         # if paper_job.is_failed:
         #     self.fail(tup)
         self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
-
-        mask, labels = paper_job.result[:2]
+        if paper['success']:
+            mask = paper['mask']
+            labels = paper['label_dict']
+        else:
+            self.fail(tup)
         final_mask = pipeline.after_pd_conclusions(mask, labels, person['face'])
         idx = 0
         items = []
