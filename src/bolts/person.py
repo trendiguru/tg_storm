@@ -7,6 +7,7 @@ import time
 from trendi import constants
 from trendi import whitelist, page_results, Utils, background_removal, pipeline, constants
 from trendi.paperdoll import paperdoll_parse_enqueue
+from trendi.paperdoll import pd_falcon_client
 
 
 class PersonBolt(Bolt):
@@ -25,13 +26,14 @@ class PersonBolt(Bolt):
 
         self.log("sending to Herr paperdoll")
         start = time.time()
-        paper_job = paperdoll_parse_enqueue.paperdoll_enqueue(image, str(person['_id']))
-        while not paper_job.is_finished or paper_job.is_failed:
-            time.sleep(0.5)
-            if time.time()-start > 1000:
-                self.fail(tup)
-        if paper_job.is_failed:
-            self.fail(tup)
+        paper_job = pd_falcon_client(image)
+        # paper_job = paperdoll_parse_enqueue.paperdoll_enqueue(image, str(person['_id']))
+        # while not paper_job.is_finished or paper_job.is_failed:
+        #     time.sleep(0.5)
+        #     if time.time()-start > 1000:
+        #         self.fail(tup)
+        # if paper_job.is_failed:
+        #     self.fail(tup)
         self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
 
         mask, labels = paper_job.result[:2]
