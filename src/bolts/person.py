@@ -29,6 +29,7 @@ class PersonBolt(Bolt):
         try:
             if person['segmentation_method'] == 'pd':
                 seg_res = pd_falcon_client.pd(image)
+
             else:
                 seg_res = neurodoll_falcon_client.pd(image)
         except Exception as e:
@@ -45,7 +46,10 @@ class PersonBolt(Bolt):
         self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
         if 'success' in seg_res and seg_res['success']:
             mask = seg_res['mask']
-            labels = constants.ultimate_21_dict
+            if person['segmentation_method'] == 'pd':
+                labels = seg_res['label_dict']
+            else:
+                labels = constants.ultimate_21_dict
         else:
             self.fail(tup)
         final_mask = pipeline.after_pd_conclusions(mask, labels, person['face'])
