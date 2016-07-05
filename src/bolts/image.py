@@ -22,7 +22,7 @@ class NewImageBolt(Bolt):
                                     ' to be gender-classified !', 'date': time.ctime()}
 
     def process(self, tup):
-        page_url, image_url = tup.values
+        page_url, image_url, method = tup.values
 
         domain = tldextract.extract(page_url).registered_domain
 
@@ -47,7 +47,8 @@ class NewImageBolt(Bolt):
             person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
                          min(image.shape[0], 8 * h)]
             person_args = {'face': face, 'person_bb': person_bb, 'image_id': image_dict['image_id'],
-                           'image': isolated_image.tolist(), 'gender': person['gender'], 'domain': domain}
+                           'image': isolated_image.tolist(), 'gender': person['gender'], 'domain': domain,
+                           'segmentation_method': method}
             if person['gender'] is not None:
                 people_to_emit.append(person_args)
                 idx += 1

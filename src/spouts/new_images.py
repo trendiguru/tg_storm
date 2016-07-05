@@ -16,8 +16,8 @@ class NewImageSpout(Spout):
         job = self.q.dequeue()
         if not job:
             return
-        self.page_url, self.image_url, lang = job.args  # TODO - cancel the lang..
-        self.emit([self.page_url, self.image_url], tup_id=self.image_url)
+        self.page_url, self.image_url, method = job.args  # TODO - cancel the lang..
+        self.emit([self.page_url, self.image_url, method], tup_id=self.image_url)
 
     def fail(self, tup_id):
         deleted = db.iip.delete_one({'image_url': tup_id}).deleted_count

@@ -7,7 +7,7 @@ import time
 from trendi import constants
 from trendi import whitelist, page_results, Utils, background_removal, pipeline, constants
 from trendi.paperdoll import paperdoll_parse_enqueue
-from trendi.paperdoll import pd_falcon_client
+from trendi.paperdoll import pd_falcon_client, neurodoll_falcon_client
 
 
 class PersonBolt(Bolt):
@@ -27,7 +27,10 @@ class PersonBolt(Bolt):
         self.log("sending to Herr paperdoll")
         start = time.time()
         try:
-            paper = pd_falcon_client.pd(image)
+            if person['segmentation_method'] == 'pd':
+                seg_res = pd_falcon_client.pd(image)
+            else:
+                seg_res = neurodoll_falcon_client.pd(image)
         except Exception as e:
             self.log(e)
             self.fail(tup)
@@ -40,9 +43,9 @@ class PersonBolt(Bolt):
         # if paper_job.is_failed:
         #     self.fail(tup)
         self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
-        if 'success' in paper and paper['success']:
-            mask = paper['mask']
-            labels = paper['label_dict']
+        if 'success' in seg_res and seg_res['success']:
+            mask = seg_res['mask']
+            labels = seg_res['label_dict']
         else:
             self.fail(tup)
         final_mask = pipeline.after_pd_conclusions(mask, labels, person['face'])
