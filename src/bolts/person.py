@@ -24,7 +24,7 @@ class PersonBolt(Bolt):
         person['items'] = []
         # TODO - serialize image obj or .tolist() it
 
-        self.log("sending to Herr paperdoll")
+        self.log("sending to method: {0}".format(person['segmentation_method']))
         start = time.time()
         try:
             if person['segmentation_method'] == 'pd':
