@@ -43,7 +43,7 @@ class PersonBolt(Bolt):
         #         self.fail(tup)
         # if paper_job.is_failed:
         #     self.fail(tup)
-        self.log("back from paperdoll after {0} seconds..".format(time.time() - start))
+        self.log("back from {0} after {1} seconds..".format(person['segmentation_method'], time.time() - start))
         if 'success' in seg_res and seg_res['success']:
             mask = seg_res['mask']
             if person['segmentation_method'] == 'pd':
