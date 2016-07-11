@@ -30,12 +30,12 @@ class NewImageBolt(Bolt):
         if image is None:
             self.log("'get_cv2_img_array' has failed. Bad image!")
             return
-
-        image_hash = page_results.get_hash(image)
+        small_img, rr = background_removal.standard_resize(image, 400)
+        image_hash = page_results.get_hash(small_img)
 
         gender_obj = db.genderator.find_one({'image_url': image_url})
         for person in gender_obj['people']:
-            person['gender'] = page_results.genderize(image, person['face'])['gender']
+            person['gender'] = page_results.genderize(small_img, person['face'])['gender']
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
                       'people': gender_obj['people'], 'image_id': str(bson.ObjectId()), 'domain': domain}
@@ -45,9 +45,9 @@ class NewImageBolt(Bolt):
         for person in image_dict['people']:
             face = person['face']
             x, y, w, h = face
-            isolated_image = background_removal.person_isolation(image, face)
-            person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(image.shape[1], x + 2.5 * w))),
-                         min(image.shape[0], 8 * h)]
+            isolated_image = background_removal.person_isolation(small_img, face)
+            person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(small_img.shape[1], x + 2.5 * w))),
+                         min(small_img.shape[0], 8 * h)]
             person_args = {'face': face, 'person_bb': person_bb, 'image_id': image_dict['image_id'],
                            'image': isolated_image.tolist(), 'gender': person['gender'], 'domain': domain,
                            'segmentation_method': method}
