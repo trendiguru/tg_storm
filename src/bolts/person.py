@@ -52,6 +52,7 @@ class PersonBolt(Bolt):
                 labels = constants.ultimate_21_dict
         else:
             self.fail(tup)
+            return
         final_mask = pipeline.after_nn_conclusions(mask, labels, person['face'])
         idx = 0
         items = []
