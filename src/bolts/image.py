@@ -30,7 +30,7 @@ class NewImageBolt(Bolt):
         if image is None:
             self.log("'get_cv2_img_array' has failed. Bad image!")
             return
-        small_img, rr = background_removal.standard_resize(image, 400)
+        small_img, rr = background_removal.standard_resize(image, 500)
         image_hash = page_results.get_hash(small_img)
 
         gender_obj = db.genderator.find_one({'image_url': image_url})
