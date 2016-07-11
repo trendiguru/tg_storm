@@ -34,6 +34,8 @@ class NewImageBolt(Bolt):
         image_hash = page_results.get_hash(image)
 
         gender_obj = db.genderator.find_one({'image_url': image_url})
+        for person in gender_obj['people']:
+            person['gender'] = page_results.genderize(image, person['face'])
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
                       'people': gender_obj['people'], 'image_id': str(bson.ObjectId()), 'domain': domain}
