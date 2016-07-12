@@ -33,12 +33,12 @@ class NewImageBolt(Bolt):
         small_img, rr = background_removal.standard_resize(image, 400)
         image_hash = page_results.get_hash(small_img)
 
-        gender_obj = db.genderator.find_one({'image_url': image_url})
-        for person in gender_obj['people']:
+        temp_obj = db.iip.find_one({'image_url': image_url})
+        for person in temp_obj['people']:
             person['gender'] = page_results.genderize(small_img, person['face'])['gender']
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
-                      'people': gender_obj['people'], 'image_id': str(bson.ObjectId()), 'domain': domain}
+                      'people': temp_obj['people'], 'image_id': str(bson.ObjectId()), 'domain': domain}
         db.permanent_images.insert_one({'image_url': image_url})
         idx = 0
         people_to_emit = []
@@ -55,7 +55,6 @@ class NewImageBolt(Bolt):
                 people_to_emit.append(person_args)
                 idx += 1
 
-        # db.genderator.delete_one({'image_url': image_url})
         image_dict['num_of_people'] = idx
         image_dict['people'] = []
         self.emit([image_dict, image_dict['image_id']], stream='image_obj')
@@ -91,8 +90,7 @@ class MergePeople(Bolt):
                 image_obj = self.bucket[image_id]['image_obj']
                 image_obj['saved_date'] = datetime.datetime.strptime(image_obj['saved_date'], "%Y-%m-%d %H:%M:%S.%f")
                 insert_result = db.images.insert_one(image_obj)
-                db.genderator.delete_one({'image_urls': image_obj['image_urls'][0]})
-                db.permanent_images.insert_one(image_obj)
+                # db.genderator.delete_one({'image_urls': image_obj['image_urls'][0]})
                 db.iip.delete_one({'image_url': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
