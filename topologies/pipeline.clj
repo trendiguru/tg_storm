@@ -9,7 +9,7 @@
     "image-spout" (python-spout-spec
           options
           "spouts.new_images.NewImageSpout"
-          ["page_url", "image_url", "method"]
+          ["page_url", "image_url", "products_collection"]
           )
     }
     ;;"object-image-spout" (python-spout-spec
@@ -30,13 +30,13 @@
           )
 
     ;;"object-image-bolt" (python-bolt-spec
-      ;;    options
-        ;;  {"object-image-spout" :shuffle}
-    ;;      "bolts.object_image.NewObjectsImageBolt"
-      ;;    {"to_item_bolt" ["object" "image_id"]
-        ;;   "to_merge_objects" ["image_obj", "image_id"]}
-      ;;    :p 1
-        ;;  )
+    ;;    options
+    ;;    {"object-image-spout" :shuffle}
+    ;;     "bolts.object_image.NewObjectsImageBolt"
+    ;;    {"to_item_bolt" ["object" "image_id"]
+    ;;     "to_merge_objects" ["image_obj", "image_id"]}
+    ;;    :p 1
+    ;;    )
 
     "person-bolt" (python-bolt-spec
           options
