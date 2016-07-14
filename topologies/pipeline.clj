@@ -42,8 +42,8 @@
           options
           {["image-bolt" "person_args"] :shuffle}
           "bolts.person.PersonBolt"
-          {"item_args" ["item" "person_id"]
-           "person_obj" ["person_obj", "person_id", "image_id"]}
+          {"item_args" ["item" "person_id", "image_id"]
+           "person_obj" ["person_obj", "person_id"]}
 	      :p 10
           )
 
