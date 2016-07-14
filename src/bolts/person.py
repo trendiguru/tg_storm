@@ -64,11 +64,11 @@ class PersonBolt(Bolt):
                 idx += 1
         person['num_of_items'] = idx
         person.pop('domain')
-        id1 = self.emit([person, person['_id'], image_id], stream='person_obj')
+        id1 = self.emit([person, person['_id']], stream='person_obj')
         self.log("emitted person {0} to merge, task id is {1}".format(person['_id'], id1))
         for item in items:
             self.log("emitting {0}".format(item['category']))
-            id2 = self.emit([item, person['_id']], stream='item_args')
+            id2 = self.emit([item, person['_id'], image_id], stream='item_args')
             self.log("AFTER ITEM {id} EMIT".format(id=id2))
 
 

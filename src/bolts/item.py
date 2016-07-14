@@ -19,7 +19,7 @@ class ItemBolt(Bolt):
         # else:
         #     item, image_id = tup.values
         #     person_id = None
-        item, person_id, images_id = tup.values
+        item, person_id, image_id = tup.values
         # domain = item['domain']
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
