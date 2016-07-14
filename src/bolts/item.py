@@ -43,7 +43,7 @@ class ItemBolt(Bolt):
                                                                                                   prod)
         self.log("back from find_top_n after {0} secs..".format(time.time() - start))
         out_item['category'] = item['category']
-        self.emit([out_item, person_id, image_id], stream='to_merge_items')
+        self.emit([out_item, person_id])
         # if tup.stream == "item_args":
         #     self.emit([out_item, person_id], stream='to_merge_items')
         # else:
