@@ -19,7 +19,7 @@ class ItemBolt(Bolt):
         # else:
         #     item, image_id = tup.values
         #     person_id = None
-        item, person_id = tup.values
+        item, person_id, images_id = tup.values
         # domain = item['domain']
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
@@ -43,7 +43,7 @@ class ItemBolt(Bolt):
                                                                                                   prod)
         self.log("back from find_top_n after {0} secs..".format(time.time() - start))
         out_item['category'] = item['category']
-        self.emit([out_item, person_id], stream='to_merge_items')
+        self.emit([out_item, person_id, image_id], stream='to_merge_items')
         # if tup.stream == "item_args":
         #     self.emit([out_item, person_id], stream='to_merge_items')
         # else:
