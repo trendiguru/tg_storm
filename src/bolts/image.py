@@ -69,11 +69,9 @@ class MergePeople(Bolt):
 
     def process(self, tup):
         if tup.stream == "image_obj":
-            self.log("got to MergePeople from image_obj-stream")
             image_dict, image_id = tup.values
             self.bucket[image_id] = {'person_stack': 0, 'image_obj': image_dict}
         else:
-            self.log("got to MergePeople from MergeItems bolt")
             person, image_id = tup.values
             self.bucket[image_id]['image_obj']['people'].append(person)
             self.bucket[image_id]['person_stack'] += 1
@@ -84,8 +82,6 @@ class MergePeople(Bolt):
                 image_obj = self.bucket[image_id]['image_obj']
                 image_obj['saved_date'] = datetime.datetime.strptime(image_obj['saved_date'], "%Y-%m-%d %H:%M:%S.%f")
                 db.images.insert_one(image_obj)
-                self.log('gonna delete {0} from iip'.format(image_obj['image_urls'][0]))
-                del_res = db.iip.delete_one({'image_urls': image_obj['image_urls'][0]})
-                self.log('deleted {0} docs from iip'.format(del_res.deleted_count))
+                db.iip.delete_one({'image_urls': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
