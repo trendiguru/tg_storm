@@ -91,7 +91,7 @@ class MergePeople(Bolt):
                 insert_result = db.images.insert_one(image_obj)
                 db.genderator.delete_one({'image_urls': image_obj['image_urls'][0]})
                 db.permanent_images.insert_one(image_obj)
-                db.iip.delete_one({'image_url': image_obj['image_urls'][0]})
+                db.iip.delete_one({'image_urls': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
                 if not insert_result.acknowledged:
