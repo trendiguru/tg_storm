@@ -85,6 +85,8 @@ class MergePeople(Bolt):
                 image_obj['saved_date'] = datetime.datetime.strptime(image_obj['saved_date'], "%Y-%m-%d %H:%M:%S.%f")
                 if image_obj['page_urls'][0] is not "dummy":
                     db.images.insert_one(image_obj)
-                db.iip.delete_one({'image_urls': image_obj['image_urls'][0]})
+                self.log('gonna delete {0} from iip'.format(image_obj['image_urls'][0]))
+                del_res = db.iip.delete_one({'image_urls': image_obj['image_urls'][0]})
+                self.log('deleted {0} docs from iip'.format(del_res.deleted_count))
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
