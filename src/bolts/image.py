@@ -83,8 +83,7 @@ class MergePeople(Bolt):
             if self.bucket[image_id]['person_stack'] == self.bucket[image_id]['image_obj']['num_of_people']:
                 image_obj = self.bucket[image_id]['image_obj']
                 image_obj['saved_date'] = datetime.datetime.strptime(image_obj['saved_date'], "%Y-%m-%d %H:%M:%S.%f")
-                if image_obj['page_urls'][0] is not "dummy":
-                    db.images.insert_one(image_obj)
+                db.images.insert_one(image_obj)
                 self.log('gonna delete {0} from iip'.format(image_obj['image_urls'][0]))
                 del_res = db.iip.delete_one({'image_urls': image_obj['image_urls'][0]})
                 self.log('deleted {0} docs from iip'.format(del_res.deleted_count))
