@@ -20,7 +20,6 @@ class ItemBolt(Bolt):
         #     item, image_id = tup.values
         #     person_id = None
         item, person_id, image_id = tup.values
-        # domain = item['domain']
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
         if 'gender' in item.keys():
@@ -31,12 +30,6 @@ class ItemBolt(Bolt):
         start = time.time()
         coll = item['products_collection']
         prod = coll + '_' + gender
-        # if domain in products_per_site.keys():
-        #     coll = products_per_site[domain]
-        #     prod = coll + '_' + gender
-        # else:
-        #     coll = products_per_site['default']
-        #     prod = coll + '_' + gender
         out_item['fp'], out_item['similar_results'][coll] = find_similar_mongo.find_top_n_results(item['image'],
                                                                                                   item['mask'], 100,
                                                                                                   item['category'],
