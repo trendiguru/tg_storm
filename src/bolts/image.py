@@ -37,7 +37,6 @@ class NewImageBolt(Bolt):
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
                       'people': gender_obj['people'], 'image_id': str(bson.ObjectId()), 'domain': domain}
-        db.permanent_images.insert_one({'image_url': image_url})
         idx = 0
         people_to_emit = []
         for person in image_dict['people']:
@@ -49,11 +48,9 @@ class NewImageBolt(Bolt):
             person_args = {'face': face, 'person_bb': person_bb, 'image_id': image_dict['image_id'],
                            'image': isolated_image.tolist(), 'gender': person['gender'], 'domain': domain,
                            'products_collection': products_collection, 'segmentation_method': method}
-            if person['gender'] is not None:
-                people_to_emit.append(person_args)
-                idx += 1
+            people_to_emit.append(person_args)
+            idx += 1
 
-        # db.genderator.delete_one({'image_url': image_url})
         image_dict['num_of_people'] = idx
         image_dict['people'] = []
         self.emit([image_dict, image_dict['image_id']], stream='image_obj')
@@ -62,7 +59,7 @@ class NewImageBolt(Bolt):
             self.emit([person], stream='person_args')
         if not idx:
             db.irrelevant_images.insert_one(image_dict)
-            db.iip.delete_one({'image_url': image_url})
+            db.iip.delete_one({'image_urls': image_url})
             self.log('{url} stored as irrelevant, wrong face was found'.format(url=image_url))
 
 
@@ -88,11 +85,12 @@ class MergePeople(Bolt):
             if self.bucket[image_id]['person_stack'] == self.bucket[image_id]['image_obj']['num_of_people']:
                 image_obj = self.bucket[image_id]['image_obj']
                 image_obj['saved_date'] = datetime.datetime.strptime(image_obj['saved_date'], "%Y-%m-%d %H:%M:%S.%f")
-                insert_result = db.images.insert_one(image_obj)
+                if db.images.find_one({'image_urls': image_obj['image_urls'][0]}):
+                    db.images.replace_one(image_obj)
+                else:
+                    db.images.insert_one(image_obj)
                 db.genderator.delete_one({'image_urls': image_obj['image_urls'][0]})
                 db.permanent_images.insert_one(image_obj)
                 db.iip.delete_one({'image_urls': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
-                if not insert_result.acknowledged:
-                    self.log("Insert failed")
