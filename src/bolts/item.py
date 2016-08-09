@@ -34,7 +34,7 @@ class ItemBolt(Bolt):
                                                                                                   item['mask'], 100,
                                                                                                   item['category'],
                                                                                                   prod)
-        self.log("back from find_top_n after {0} secs..".format(time.time() - start))
+        self.log("back from find_top_n after {0} secs, collection = {1}".format(time.time() - start), prod)
         out_item['category'] = item['category']
         self.emit([out_item, person_id])
         # if tup.stream == "item_args":
