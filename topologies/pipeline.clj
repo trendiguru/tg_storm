@@ -44,7 +44,7 @@
           "bolts.person.PersonBolt"
           {"item_args" ["item" "person_id", "image_id"]
            "person_obj" ["person_obj", "person_id", "image_id"]}
-	      :p 10
+	      :p 15
           )
 
     "item-bolt" (python-bolt-spec
@@ -52,7 +52,7 @@
           {["person-bolt" "item_args"] :shuffle}
           "bolts.item.ItemBolt"
           ["item", "person_id"]
-          :p 10
+          :p 15
           )
 
     ;; future item bolt:
