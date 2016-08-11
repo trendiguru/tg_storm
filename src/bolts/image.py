@@ -25,7 +25,7 @@ class NewImageBolt(Bolt):
         page_url, image_url, products_collection, method = tup.values
 
         if db.images.find_one({'image_urls': image_url}):
-            self.ack(tup)
+            return
 
         domain = tldextract.extract(page_url).registered_domain
 
