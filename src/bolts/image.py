@@ -25,7 +25,7 @@ class NewImageBolt(Bolt):
         page_url, image_url, products_collection, method = tup.values
 
         if db.images.find_one({'image_urls': image_url}):
-            self.ack()
+            self.ack(tup)
 
         domain = tldextract.extract(page_url).registered_domain
 
@@ -88,10 +88,6 @@ class MergePeople(Bolt):
             if self.bucket[image_id]['person_stack'] == self.bucket[image_id]['image_obj']['num_of_people']:
                 image_obj = self.bucket[image_id]['image_obj']
                 image_obj['saved_date'] = datetime.datetime.strptime(image_obj['saved_date'], "%Y-%m-%d %H:%M:%S.%f")
-                # if db.images.find_one({'image_urls': image_obj['image_urls'][0]}):
-                #     db.images.replace_one(image_obj)
-                # else:
-                #     db.images.insert_one(image_obj)
                 db.images.find_one_and_replace({'image_urls': image_obj['image_urls'][0]}, image_obj, upsert=True)
                 db.genderator.delete_one({'image_urls': image_obj['image_urls'][0]})
                 db.permanent_images.insert_one(image_obj)
