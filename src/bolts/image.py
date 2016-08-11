@@ -24,6 +24,9 @@ class NewImageBolt(Bolt):
     def process(self, tup):
         page_url, image_url, products_collection, method = tup.values
 
+        if db.images.find_one({'image_urls': image_url}):
+            self.ack()
+
         domain = tldextract.extract(page_url).registered_domain
 
         image = Utils.get_cv2_img_array(image_url)
