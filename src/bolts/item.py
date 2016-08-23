@@ -35,6 +35,9 @@ class ItemBolt(Bolt):
                                                                                                   item['category'],
                                                                                                   prod)
         self.log("back from find_top_n after {0} secs, collection = {1}".format((time.time() - start), prod))
+        for feature in out_item['fp'].keys():
+            if isinstance(out_item['fp'][feature], np.ndarray):
+                out_item['fp'][feature] = out_item['fp'][feature].tolist()
         out_item['category'] = item['category']
         self.emit([out_item, person_id])
         # if tup.stream == "item_args":
