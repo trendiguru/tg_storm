@@ -33,6 +33,9 @@ class ItemBolt(Bolt):
                                                                                                   item['mask'], 100,
                                                                                                   item['category'],
                                                                                                   prod)
+        for feature in out_item['fp'].keys():
+            if isinstance(out_item['fp'][feature], np.ndarray):
+                out_item['fp'][feature] = out_item['fp'][feature].tolist()
         self.log("back from find_top_n after {0} secs..".format(time.time() - start))
         out_item['category'] = item['category']
         self.emit([out_item, person_id])
