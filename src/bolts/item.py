@@ -23,7 +23,7 @@ class ItemBolt(Bolt):
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
         if 'gender' in item.keys():
-            gender = item['gender']
+            gender = item['gender'] or 'Female'
         else:
             gender = "Female"
         out_item = {'similar_results': {}}
