@@ -6,7 +6,7 @@ import datetime
 import bson
 import time
 from trendi import monitoring
-from trendi.constants import db, manual_gender_domains
+from trendi.constants import db
 from trendi import whitelist, page_results, Utils, background_removal
 GENDERATOR_PATH = 'http://extremeli.trendi.guru/demo/genderator'
 YONATANS_PATH = 'http://extremeli.trendi.guru/demo/yonatan_gender'
