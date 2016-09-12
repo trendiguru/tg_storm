@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from streamparse.bolt import Bolt
+from streamparse import Stream
 from pystorm import Tuple
 import bson
 import numpy as np
@@ -11,6 +12,9 @@ from trendi.paperdoll import pd_falcon_client, neurodoll_falcon_client
 
 
 class PersonBolt(Bolt):
+
+    outputs = [Stream(fields=["item" "person_id", "image_id"], name='item_args'),
+               Stream(fields=["person_obj", "person_id", "image_id"], name='person_obj')]
 
     def initialize(self, conf, ctx):
         self.db = constants.db
@@ -73,6 +77,8 @@ class PersonBolt(Bolt):
 
 
 class MergeItems(Bolt):
+
+    outputs = ["person", "image_id"]
 
     def initialize(self, conf, ctx):
         self.bucket = {}
