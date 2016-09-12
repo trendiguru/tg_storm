@@ -72,6 +72,8 @@ class NewImageBolt(Bolt):
 
 class MergePeople(Bolt):
 
+    outputs = ['default']
+
     def initialize(self, conf, ctx):
         self.db = db
         self.bucket = {}
