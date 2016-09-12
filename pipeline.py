@@ -3,20 +3,20 @@ Pipeline topology
 """
 
 from streamparse import Grouping, Topology
-from bolts.image import ImageBolt, MergePeople
+from bolts.image import NewImageBolt, MergePeople
 from bolts.person import PersonBolt, MergeItems
 from bolts.item import ItemBolt
-from spouts.new_images import ImageSpout
+from spouts.new_images import NewImageSpout
 
 
 # top topology class
 class pipeline(Topology):
 
     # Spouts
-    image_spout = ImageSpout.spec()
+    image_spout = NewImageSpout.spec()
 
     # Bolts
-    image_bolt = ImageBolt.spec(inputs=[image_spout], par=1)
+    image_bolt = NewImageBolt.spec(inputs=[image_spout], par=1)
 
     person_bolt = PersonBolt(inputs=[image_bolt], par=15)
 
