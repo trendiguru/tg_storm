@@ -16,7 +16,8 @@ YONATANS_PATH = 'http://extremeli.trendi.guru/demo/yonatan_gender'
 class NewImageBolt(Bolt):
 
     outputs = [Stream(fields=['person'], name='person_args'),
-               Stream(fields=["image_obj", "image_id"], name='image_obj')]
+               Stream(fields=["image_obj", "image_id"], name='image_obj'),
+               Stream(fields=[], name='default')]
 
     def initialize(self, conf, ctx):
         self.db = db
@@ -71,8 +72,6 @@ class NewImageBolt(Bolt):
 
 
 class MergePeople(Bolt):
-
-    outputs = ['default']
 
     def initialize(self, conf, ctx):
         self.db = db

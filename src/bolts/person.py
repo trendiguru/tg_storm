@@ -14,7 +14,8 @@ from trendi.paperdoll import pd_falcon_client, neurodoll_falcon_client
 class PersonBolt(Bolt):
 
     outputs = [Stream(fields=["item" "person_id", "image_id"], name='item_args'),
-               Stream(fields=["person_obj", "person_id", "image_id"], name='person_obj')]
+               Stream(fields=["person_obj", "person_id", "image_id"], name='person_obj'),
+               Stream(fields=[], name='default')]
 
     def initialize(self, conf, ctx):
         self.db = constants.db
