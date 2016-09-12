@@ -18,9 +18,9 @@ class pipeline(Topology):
     # Bolts
     image_bolt = NewImageBolt.spec(inputs=[image_spout], par=1)
 
-    person_bolt = PersonBolt(inputs=[image_bolt], par=15)
+    person_bolt = PersonBolt.spec(inputs=[image_bolt], par=15)
 
-    item_bolt = ItemBolt(inputs=[person_bolt], par=15)
+    item_bolt = ItemBolt.spec(inputs=[person_bolt], par=15)
 
     merge_items_bolt = MergeItems.spec(inputs=[{person_bolt['person_obj']: Grouping.fields('person_id')},
                                                {item_bolt: Grouping.fields('person_id')}],
