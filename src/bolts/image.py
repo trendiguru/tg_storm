@@ -39,10 +39,8 @@ class NewImageBolt(Bolt):
         people_to_emit = []
         for person in image_dict['people']:
             face = person['face']
-            x, y, w, h = face
             isolated_image = background_removal.person_isolation(small_img, face)
-            person_bb = [int(round(max(0, x - 1.5 * w))), str(y), int(round(min(small_img.shape[1], x + 2.5 * w))),
-                         min(small_img.shape[0], 8 * h)]
+            person_bb = Utils.get_person_bb_from_face(face, image.shape)
             person_args = {'face': face, 'person_bb': person_bb, 'image_id': image_dict['image_id'],
                            'image': isolated_image.tolist(), 'gender': person['gender'], 'domain': domain,
                            'segmentation_method': method}
