@@ -5,7 +5,6 @@ import tldextract
 import datetime
 import bson
 import time
-from trendi import monitoring
 from trendi.constants import db
 from trendi import whitelist, page_results, Utils, background_removal
 GENDERATOR_PATH = 'http://extremeli.trendi.guru/demo/genderator'
