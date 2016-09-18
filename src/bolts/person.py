@@ -64,7 +64,7 @@ class PersonBolt(Bolt):
         person.pop('domain')
         self.emit([person, person['_id'], image_id], stream='person_obj')
         for item in items:
-            self.log("emitting {0}".format(item['category']))
+            # self.log("emitting {0}".format(item['category']))
             self.emit([item, person['_id']], stream='item_args')
 
 
