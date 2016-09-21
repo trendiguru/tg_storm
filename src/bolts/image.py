@@ -55,7 +55,7 @@ class NewImageBolt(Bolt):
             self.emit([person], stream='person_args')
         if not idx:
             db.irrelevant_images.insert_one(image_dict)
-            db.iip.delete_one({'image_url': image_url})
+            db.iip.delete_one({'image_urls': image_url})
             self.log('{url} stored as irrelevant, wrong face was found'.format(url=image_url))
 
 
