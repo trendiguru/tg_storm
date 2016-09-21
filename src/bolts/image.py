@@ -33,6 +33,8 @@ class NewImageBolt(Bolt):
         image_hash = page_results.get_hash(image)
 
         temp_obj = db.iip.find_one({'image_urls': image_url})
+        if not temp_obj:
+            temp_obj = db.genderator.find_one({'image_urls': image_url})
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
                       'people': temp_obj['people'], 'image_id': str(bson.ObjectId()), 'domain': domain}
