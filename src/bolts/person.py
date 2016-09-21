@@ -35,7 +35,6 @@ class PersonBolt(Bolt):
         except Exception as e:
             self.log(e)
             self.fail(tup)
-            return
 
         self.log("back from {0} after {1} seconds..".format(person['segmentation_method'], time.time() - start))
         if 'success' in seg_res and seg_res['success']:

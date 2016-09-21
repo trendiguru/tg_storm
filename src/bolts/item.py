@@ -13,12 +13,6 @@ class ItemBolt(Bolt):
         self.db = db
 
     def process(self, tup):
-        # if tup.stream == "item_args":
-        #     item, person_id = tup.values
-        #     image_id = None
-        # else:
-        #     item, image_id = tup.values
-        #     person_id = None
         item, person_id, image_id = tup.values
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
@@ -40,7 +34,4 @@ class ItemBolt(Bolt):
                 out_item['fp'][feature] = out_item['fp'][feature].tolist()
         out_item['category'] = item['category']
         self.emit([out_item, person_id])
-        # if tup.stream == "item_args":
-        #     self.emit([out_item, person_id], stream='to_merge_items')
-        # else:
-        #     self.emit([out_item, image_id], stream='to_merge_objects')
+

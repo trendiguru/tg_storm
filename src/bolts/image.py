@@ -20,7 +20,8 @@ class NewImageBolt(Bolt):
         page_url, image_url, products_collection, method = tup.values
 
         if db.images.find_one({'image_urls': image_url}):
-            return
+            self.ack(tup)
+            # return
 
         domain = tldextract.extract(page_url).registered_domain
 
@@ -58,6 +59,7 @@ class NewImageBolt(Bolt):
             db.irrelevant_images.insert_one(image_dict)
             db.iip.delete_one({'image_urls': image_url})
             # self.log('{url} stored as irrelevant, wrong face was found'.format(url=image_url))
+            self.ack(tup)
 
 
 class MergePeople(Bolt):
@@ -84,7 +86,7 @@ class MergePeople(Bolt):
                 image_obj['saved_date'] = datetime.datetime.strptime(image_obj['saved_date'], "%Y-%m-%d %H:%M:%S.%f")
                 db.images.find_one_and_replace({'image_urls': image_obj['image_urls'][0]}, image_obj, upsert=True)
                 db.genderator.delete_one({'image_urls': image_obj['image_urls'][0]})
-                db.permanent_images.insert_one(image_obj)
                 db.iip.delete_one({'image_urls': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
+                self.ack(tup)
