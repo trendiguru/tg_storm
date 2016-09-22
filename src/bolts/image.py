@@ -21,7 +21,7 @@ class NewImageBolt(Bolt):
 
         if db.images.find_one({'image_urls': image_url}):
             self.ack(tup)
-            # return
+            return
 
         domain = tldextract.extract(page_url).registered_domain
 
@@ -91,4 +91,4 @@ class MergePeople(Bolt):
                 db.iip.delete_one({'image_urls': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
-                self.ack(tup)
+                # self.ack(tup)

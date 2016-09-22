@@ -16,7 +16,7 @@ class NewImageSpout(Spout):
         job = self.q.dequeue()
         if not job:
             return
-        self.page_url, self.image_url, products, method = job.args  # TODO - cancel the lang..
+        self.page_url, self.image_url, products, method = job.args
         self.emit([self.page_url, self.image_url, products, method], tup_id=self.image_url)
 
     def fail(self, tup_id):

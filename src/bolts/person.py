@@ -35,6 +35,7 @@ class PersonBolt(Bolt):
         except Exception as e:
             self.log(e)
             self.fail(tup)
+            return
 
         self.log("back from {0} after {1} seconds..".format(person['segmentation_method'], time.time() - start))
         if 'success' in seg_res and seg_res['success']:
@@ -45,6 +46,7 @@ class PersonBolt(Bolt):
                 labels = constants.ultimate_21_dict
         else:
             self.fail(tup)
+            return
         final_mask = pipeline.after_pd_conclusions(mask, labels, person['face'])
         idx = 0
         items = []
