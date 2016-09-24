@@ -29,7 +29,7 @@ class NewImageBolt(Bolt):
         small_img, rr = background_removal.standard_resize(image, 600)
         image_hash = page_results.get_hash(small_img)
 
-        temp_obj = db.iip.find_one({'image_urls': image_url})
+        temp_obj = db.iip.find_one({'image_urls': image_url}) or db.iip.find_one({'image_url': image_url})
         for person in temp_obj['people']:
             person['gender'] = page_results.genderize(small_img, person['face'])['gender']
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
