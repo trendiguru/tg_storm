@@ -19,7 +19,7 @@ class NewImageSpout(Spout):
         self.page_url, self.image_url, products, method = job.args
         self.log("BEFORE EMITING")
         self.emit([self.page_url, self.image_url, products, method], tup_id=self.image_url)
-        self.log("AFTER DEQUEING")
+        self.log("AFTER EMITING")
 
     def fail(self, tup_id):
         deleted = db.iip.delete_one({'image_urls': tup_id}).deleted_count
