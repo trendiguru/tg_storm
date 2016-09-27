@@ -14,8 +14,6 @@ class NewImageSpout(Spout):
 
     def next_tuple(self):
         job = self.q.dequeue()
-        self.log("JOB: {0}".format(job))
-        self.log("JOB ARGS: {0}".format(job.args))
         page_url, image_url, products, method = job.args
         self.emit([page_url, image_url, products, method], tup_id=image_url)
 
