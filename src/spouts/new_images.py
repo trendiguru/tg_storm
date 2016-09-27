@@ -13,13 +13,9 @@ class NewImageSpout(Spout):
         self.db = db
 
     def next_tuple(self):
-        start = time.time()
         job = self.q.dequeue()
-        if not job:
-            if time.time()-start > 5:
-                self.ack("Job Deque Failed")
-            time.sleep(1)
-            job = self.q.dequeue()
+        self.log("JOB: {0}".format(job))
+        self.log("JOB ARGS: {0}".format(job.args))
         page_url, image_url, products, method = job.args
         self.emit([page_url, image_url, products, method], tup_id=image_url)
 
