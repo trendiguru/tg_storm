@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from streamparse.spout import Spout
-import rq, time
+import rq
 from trendi.constants import redis_conn, db
 
 
