@@ -16,6 +16,7 @@ class NewImageSpout(Spout):
         job = self.q.dequeue()
         if not job:
             self.fail("Something is wrong with Dequeing")
+            return
         page_url, image_url, products, method = job.args
         self.emit([page_url, image_url, products, method], tup_id=image_url)
 
