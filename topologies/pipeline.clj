@@ -10,7 +10,6 @@
           options
           "spouts.new_images.NewImageSpout"
           ["page_url", "image_url", "products_collection", "method"]
-          :p 2
           )
     }
     ;;"object-image-spout" (python-spout-spec
@@ -45,7 +44,7 @@
           "bolts.person.PersonBolt"
           {"item_args" ["item" "person_id", "image_id"]
            "person_obj" ["person_obj", "person_id", "image_id"]}
-	      :p 15
+	      :p 12
           )
 
     "item-bolt" (python-bolt-spec
@@ -53,7 +52,7 @@
           {["person-bolt" "item_args"] :shuffle}
           "bolts.item.ItemBolt"
           ["item", "person_id"]
-          :p 15
+          :p 5
           )
 
     ;; future item bolt:
