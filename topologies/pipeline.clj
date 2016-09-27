@@ -10,6 +10,7 @@
           options
           "spouts.new_images.NewImageSpout"
           ["page_url", "image_url", "products_collection", "method"]
+          :p 2
           )
     }
     ;;"object-image-spout" (python-spout-spec
