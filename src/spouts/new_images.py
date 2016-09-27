@@ -13,11 +13,13 @@ class NewImageSpout(Spout):
         self.db = db
 
     def next_tuple(self):
+        self.log("BEFORE DEQUEING")
         job = self.q.dequeue()
-        if not job:
-            return
+        self.log("AFTER DEQUEING")
         self.page_url, self.image_url, products, method = job.args
+        self.log("BEFORE EMITING")
         self.emit([self.page_url, self.image_url, products, method], tup_id=self.image_url)
+        self.log("AFTER DEQUEING")
 
     def fail(self, tup_id):
         deleted = db.iip.delete_one({'image_urls': tup_id}).deleted_count
