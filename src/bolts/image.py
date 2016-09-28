@@ -1,7 +1,6 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 from streamparse.bolt import Bolt
-from streamparse import Stream
 import tldextract
 import datetime
 import bson
@@ -13,10 +12,6 @@ YONATANS_PATH = 'http://extremeli.trendi.guru/demo/yonatan_gender'
 
 
 class NewImageBolt(Bolt):
-
-    outputs = [Stream(fields=['person'], name='person_args'),
-               Stream(fields=["image_obj", "image_id"], name='image_obj'),
-               Stream(fields=[], name='default')]
 
     def initialize(self, conf, ctx):
         self.db = db
