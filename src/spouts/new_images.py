@@ -7,6 +7,8 @@ from trendi.constants import redis_conn, db
 
 class NewImageSpout(Spout):
 
+    outputs = ["page_url", "image_url", "products_collection", "method"]
+
     def initialize(self, stormconf, context):
         rq.push_connection(redis_conn)
         self.q = rq.Queue("start_pipeline")

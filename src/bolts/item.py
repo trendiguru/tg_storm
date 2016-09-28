@@ -9,6 +9,8 @@ from trendi.constants import db, products_per_site
 
 class ItemBolt(Bolt):
 
+    outputs = ["item", "person_id"]
+
     def initialize(self, conf, ctx):
         self.db = db
 
