@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from streamparse.spout import Spout
-import rq
+import rq, time
 from trendi.constants import redis_conn, db
 
 
@@ -13,9 +13,9 @@ class NewImageSpout(Spout):
         self.db = db
 
     def next_tuple(self):
+        time.sleep(0.1)
         job = self.q.dequeue()
         if not job:
-            self.fail("Something is wrong with Dequeing")
             return
         page_url, image_url, products, method = job.args
         self.emit([page_url, image_url, products, method], tup_id=image_url)
