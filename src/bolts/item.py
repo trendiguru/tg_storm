@@ -23,12 +23,8 @@ class ItemBolt(Bolt):
             gender = "Female"
         out_item = {'similar_results': {}}
         start = time.time()
-        if domain in products_per_site.keys():
-            coll = products_per_site[domain]
-            prod = coll + '_' + gender
-        else:
-            coll = products_per_site['default']
-            prod = coll + '_' + gender
+        coll = item['products_collection']
+        prod = coll + '_' + gender
         out_item['fp'], out_item['similar_results'][coll] = find_similar_mongo.find_top_n_results(item['image'],
                                                                                                   item['mask'], 100,
                                                                                                   item['category'],

@@ -56,7 +56,8 @@ class PersonBolt(Bolt):
                 else:
                     category = pd_category
                 item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist(),
-                             'domain': person['domain'], 'gender': person['gender']}
+                             'domain': person['domain'], 'gender': person['gender'],
+                             'products_collection': person['products_collection']}
                 items.append(item_args)
                 idx += 1
         person['num_of_items'] = idx

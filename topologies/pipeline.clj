@@ -9,7 +9,7 @@
     "image-spout" (python-spout-spec
           options
           "spouts.new_images.NewImageSpout"
-          ["page_url", "image_url", "method"]
+          ["page_url", "image_url", "products", "method"]
           )
     }
     ;;"object-image-spout" (python-spout-spec

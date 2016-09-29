@@ -18,7 +18,7 @@ class NewImageBolt(Bolt):
         self.db = db
 
     def process(self, tup):
-        page_url, image_url, method = tup.values
+        page_url, image_url, products, method = tup.values
 
         domain = tldextract.extract(page_url).registered_domain
 
@@ -43,7 +43,7 @@ class NewImageBolt(Bolt):
             person_bb = Utils.get_person_bb_from_face(face, image.shape)
             person_args = {'face': face, 'person_bb': person_bb, 'image_id': image_dict['image_id'],
                            'image': isolated_image.tolist(), 'gender': person['gender'], 'domain': domain,
-                           'segmentation_method': method}
+                           'segmentation_method': method, 'products_collection': products}
             people_to_emit.append(person_args)
             idx += 1
 
