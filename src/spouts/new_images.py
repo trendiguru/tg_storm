@@ -15,10 +15,10 @@ class NewImageSpout(Spout):
         self.db = db
 
     def next_tuple(self):
-        time.sleep(0.1)
+        time.sleep(0.5)
         job = self.q.dequeue()
         if not job:
-            self.log("The start_pipeline job is empty")
+            # self.log("The start_pipeline job is empty")
             return
         page_url, image_url, products, method = job.args
         self.log("Got job image-url: {0}".format(image_url))
