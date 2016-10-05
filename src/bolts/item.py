@@ -16,7 +16,7 @@ class ItemBolt(Bolt):
 
     def process(self, tup):
         self.log("Got into ITEM-BOLT")
-        item, person_id, image_id = tup.values
+        item, person_id = tup.values
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
         if 'gender' in item.keys():
