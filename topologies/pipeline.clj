@@ -12,13 +12,7 @@
           ["page_url", "image_url", "products", "method"]
           )
     }
-    ;;"object-image-spout" (python-spout-spec
-    ;;      options
-    ;;      "spouts.new_objects.NewObjectsImageSpout"
-    ;;      ["page_url", "image_url"]
-    ;;      )
-    ;;}
-    ;; bolt configuration
+
     {
     "image-bolt" (python-bolt-spec
           options
@@ -28,15 +22,6 @@
            "image_obj" ["image_obj", "image_id"]}
           :p 1
           )
-
-    ;;"object-image-bolt" (python-bolt-spec
-      ;;    options
-        ;;  {"object-image-spout" :shuffle}
-    ;;      "bolts.object_image.NewObjectsImageBolt"
-      ;;    {"to_item_bolt" ["object" "image_id"]
-        ;;   "to_merge_objects" ["image_obj", "image_id"]}
-      ;;    :p 1
-        ;;  )
 
     "person-bolt" (python-bolt-spec
           options
@@ -54,26 +39,6 @@
           ["item", "person_id"]
           :p 10
           )
-
-    ;; future item bolt:
-    ;;"item-bolt" (python-bolt-spec
-    ;;      options
-    ;;      {["person-bolt" "item_args"] :shuffle
-    ;;       ["object-image-bolt" "to_item_bolt"] :shuffle}
-    ;;      "bolts.item.ItemBolt"
-    ;;      {"to_merge_items" ["item", "person_id"]
-    ;;       "to_merge_objects" ["item", "image_id"]}
-    ;;      :p 5
-    ;;      )
-
-    ;;"merge-objects-bolt" (python-bolt-spec
-    ;;      options
-    ;;      {["object-image-bolt" "object_obj"] ["image_id"]
-    ;;       ["item-bolt" "to_merge_objects"] ["image_id"]}
-    ;;      "bolts.object.ObjectBolt"
-    ;;      []
-    ;;      :p 2
-    ;;      )
 
     "merge-items-bolt" (python-bolt-spec
           options
