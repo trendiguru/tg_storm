@@ -15,6 +15,7 @@ class ItemBolt(Bolt):
         self.db = db
 
     def process(self, tup):
+        self.log("Got into ITEM-BOLT")
         item, person_id, image_id = tup.values
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
@@ -26,6 +27,7 @@ class ItemBolt(Bolt):
         start = time.time()
         coll = item['products_collection']
         prod = coll + '_' + gender
+        self.log("Sending to FIND_TOP_N")
         out_item['fp'], out_item['similar_results'][coll] = find_similar_mongo.find_top_n_results(item['image'],
                                                                                                   item['mask'], 100,
                                                                                                   item['category'],
