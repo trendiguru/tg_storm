@@ -18,9 +18,12 @@ class NewImageSpout(Spout):
         time.sleep(0.1)
         job = self.q.dequeue()
         if not job:
+            self.log("The start_pipeline job is empty")
             return
         page_url, image_url, products, method = job.args
+        self.log("Got job args: {0}".format(job.args))
         self.emit([page_url, image_url, products, method], tup_id=image_url)
+        self.log("Spout emitted {0}".format(image_url))
 
     def fail(self, tup_id):
         deleted = db.iip.delete_one({'image_urls': tup_id}).deleted_count
