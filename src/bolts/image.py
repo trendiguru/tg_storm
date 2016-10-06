@@ -30,6 +30,8 @@ class NewImageBolt(Bolt):
         image_hash = page_results.get_hash(small_img)
 
         temp_obj = db.iip.find_one({'image_urls': image_url}) or db.iip.find_one({'image_url': image_url})
+        if not temp_obj:
+            return
         for person in temp_obj['people']:
             person['gender'] = page_results.genderize(small_img, person['face'])['gender']
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
