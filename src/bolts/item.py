@@ -32,6 +32,6 @@ class ItemBolt(Bolt):
         for feature in out_item['fp'].keys():
             if isinstance(out_item['fp'][feature], np.ndarray):
                 out_item['fp'][feature] = out_item['fp'][feature].tolist()
-        self.log("find_top_n took {0} secs, {1} , {2}: ".format(time.time() - start), prod, item['category'])
+        self.log("find_top_n took {0} secs, {1} , {2}: ".format(time.time() - start, prod, item['category']))
         out_item['category'] = item['category']
         self.emit([out_item, person_id])
