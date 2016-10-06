@@ -2,7 +2,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from streamparse.spout import Spout
 import rq
-from trendi.constants import redis_conn, db
+import tldextract
+from trendi.constants import redis_conn, db, products_per_site
 
 
 class NewImageSpout(Spout):
@@ -17,7 +18,8 @@ class NewImageSpout(Spout):
             return
         if len(job.args) == 3:
             self.page_url, self.image_url, method = job.args
-            products = 'amazon_US'
+            domain = tldextract.extract(self.page_url).registered_domain
+            products = products_per_site[domain] if domain in products_per_site else products_per_site['default']
         else:
             self.page_url, self.image_url, products, method = job.args
         self.emit([self.page_url, self.image_url, products, method], tup_id=self.image_url)
