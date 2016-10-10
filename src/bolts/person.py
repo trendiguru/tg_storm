@@ -31,7 +31,6 @@ class PersonBolt(Bolt):
                 seg_res = neurodoll_falcon_client.pd(image)
         except Exception as e:
             self.log(e)
-            self.fail(tup)
             return
 
         self.log("back from {0} after {1} seconds..".format(person['segmentation_method'], time.time() - start))
@@ -42,7 +41,6 @@ class PersonBolt(Bolt):
             else:
                 labels = constants.ultimate_21_dict
         else:
-            self.fail(tup)
             return
         final_mask = pipeline.after_nn_conclusions(mask, labels, person['face'])
         idx = 0
