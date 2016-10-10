@@ -19,8 +19,8 @@ class NewImageBolt(Bolt):
     def process(self, tup):
         page_url, image_url, products_collection, method = tup.values
         # self.log("Got into IMAGE BOLT..")
-        if db.images.find_one({'image_urls': image_url}):
-            return
+        # if db.images.find_one({'image_urls': image_url}):
+        #     return
 
         domain = tldextract.extract(page_url).registered_domain
 
