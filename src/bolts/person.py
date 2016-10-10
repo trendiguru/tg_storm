@@ -20,7 +20,6 @@ class PersonBolt(Bolt):
         person = tup.values[0]
         person['_id'] = str(bson.ObjectId())
         person['items'] = []
-        # TODO - serialize image obj or .tolist() it
 
         start = time.time()
         try:
@@ -32,8 +31,8 @@ class PersonBolt(Bolt):
         except Exception as e:
             self.log(e)
             return
+        self.log("{0} took {1} seconds..".format(person['segmentation_method'], time.time() - start))
 
-        self.log("back from {0} after {1} seconds..".format(person['segmentation_method'], time.time() - start))
         if 'success' in seg_res and seg_res['success']:
             mask = seg_res['mask']
             if person['segmentation_method'] == 'pd':
@@ -62,7 +61,6 @@ class PersonBolt(Bolt):
         person.pop('domain')
         self.emit([person, person['_id'], image_id], stream='person_obj')
         for item in items:
-            # self.log("emitting {0}".format(item['category']))
             self.emit([item, person['_id']], stream='item_args')
 
 

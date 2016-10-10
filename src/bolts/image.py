@@ -5,7 +5,6 @@ import tldextract
 import datetime
 import bson
 import time
-from trendi import monitoring
 from trendi.constants import db
 from trendi import whitelist, page_results, Utils, background_removal
 GENDERATOR_PATH = 'http://extremeli.trendi.guru/demo/genderator'
@@ -52,7 +51,6 @@ class NewImageBolt(Bolt):
         image_dict['num_of_people'] = idx
         image_dict['people'] = []
         self.emit([image_dict, image_dict['image_id']], stream='image_obj')
-        # self.log('gonna emit {idx} people from {id}'.format(idx=idx, id=image_dict['image_id']))
         for person in people_to_emit:
             self.emit([person], stream='person_args')
         if not idx:
