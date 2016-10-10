@@ -32,7 +32,8 @@ class ItemBolt(Bolt):
                                                                                                   item['mask'], 100,
                                                                                                   item['category'],
                                                                                                   prod)
-        self.log("back from find_top_n after {0} secs, collection = {1}".format((time.time() - start), prod))
+        self.log("find_top_n took {0} secs, collection: {1}, category: {2}".format((time.time() - start), prod),
+                 item['category'])
         for feature in out_item['fp'].keys():
             if isinstance(out_item['fp'][feature], np.ndarray):
                 out_item['fp'][feature] = out_item['fp'][feature].tolist()
