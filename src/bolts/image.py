@@ -20,7 +20,6 @@ class NewImageBolt(Bolt):
         page_url, image_url, products_collection, method = tup.values
         # self.log("Got into IMAGE BOLT..")
         if db.images.find_one({'image_urls': image_url}):
-            self.ack(tup.id)
             return
 
         domain = tldextract.extract(page_url).registered_domain
@@ -32,9 +31,8 @@ class NewImageBolt(Bolt):
 
         image_hash = page_results.get_hash(image)
 
-        temp_obj = db.iip.find_one({'image_urls': image_url}) or db.iip.find_one({'image_url': image_url})
+        temp_obj = db.iip.find_one({'image_urls': image_url})
         if not temp_obj:
-            self.fail(tup.id)
             return
         image_dict = {'image_urls': [image_url], 'relevant': True, 'views': 1,
                       'saved_date': str(datetime.datetime.utcnow()), 'image_hash': image_hash, 'page_urls': [page_url],
