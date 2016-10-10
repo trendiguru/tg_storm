@@ -1,13 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from streamparse.bolt import Bolt
 # from streamparse import Stream
-from pystorm import Tuple
 import bson
 import numpy as np
 import time
 from trendi import constants
 from trendi import whitelist, page_results, Utils, background_removal, pipeline, constants
-from trendi.paperdoll import paperdoll_parse_enqueue
 from trendi.paperdoll import pd_falcon_client, neurodoll_falcon_client
 
 
@@ -21,15 +19,12 @@ class PersonBolt(Bolt):
         self.db = constants.db
 
     def process(self, tup):
-        # self.log("got into person-bolt! :)")
         image_id = tup.values[0].pop('image_id')
         image = np.array(tup.values[0].pop('image'), dtype=np.uint8)
         person = tup.values[0]
         person['_id'] = str(bson.ObjectId())
         person['items'] = []
-        # TODO - serialize image obj or .tolist() it
 
-        # self.log("sending to method: {0}".format(person['segmentation_method']))
         start = time.time()
         try:
             if person['segmentation_method'] == 'pd':
@@ -41,7 +36,7 @@ class PersonBolt(Bolt):
             self.log(e)
             return
 
-        self.log("back from {0} after {1} seconds..".format(person['segmentation_method'], time.time() - start))
+        self.log("{0} took {1} seconds..".format(person['segmentation_method'], time.time() - start))
         if 'success' in seg_res and seg_res['success']:
             mask = seg_res['mask']
             if person['segmentation_method'] == 'pd':
@@ -68,12 +63,10 @@ class PersonBolt(Bolt):
                 idx += 1
         person['num_of_items'] = idx
         person.pop('domain')
-        id1 = self.emit([person, person['_id'], image_id], stream='person_obj')
-        self.log("emitted person {0} to merge, task id is {1}".format(person['_id'], id1))
+        self.emit([person, person['_id'], image_id], stream='person_obj')
         for item in items:
             self.log("emitting {0}".format(item['category']))
-            id2 = self.emit([item, person['_id']], stream='item_args')
-            self.log("AFTER ITEM {id} EMIT".format(id=id2))
+            self.emit([item, person['_id']], stream='item_args')
 
 
 class MergeItems(Bolt):
@@ -95,6 +88,5 @@ class MergeItems(Bolt):
                                                                             person_id,
                                                                             self.bucket[person_id]['person_obj']['num_of_items']))
             if self.bucket[person_id]['item_stack'] == self.bucket[person_id]['person_obj']['num_of_items']:
-                # self.log("Done! all items for person {0} arrived, ready to Merge! :)".format(person_id))
                 self.emit([self.bucket[person_id]['person_obj'], self.bucket[person_id]['image_id']])
                 del self.bucket[person_id]

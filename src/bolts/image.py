@@ -18,7 +18,6 @@ class NewImageBolt(Bolt):
 
     def process(self, tup):
         page_url, image_url, products_collection, method = tup.values
-        # self.log("Got into IMAGE BOLT..")
         # if db.images.find_one({'image_urls': image_url}):
         #     return
 
@@ -53,14 +52,13 @@ class NewImageBolt(Bolt):
         image_dict['num_of_people'] = idx
         image_dict['people'] = []
         self.emit([image_dict, image_dict['image_id']], stream='image_obj')
-        # self.log('gonna emit {idx} people from {id}'.format(idx=idx, id=image_dict['image_id']))
         for person in people_to_emit:
             self.emit([person], stream='person_args')
         if not idx:
             db.irrelevant_images.insert_one(image_dict)
             db.iip.delete_one({'image_urls': image_url})
-            # self.log('{url} stored as irrelevant, wrong face was found'.format(url=image_url))
             return
+
 
 class MergePeople(Bolt):
 
@@ -70,11 +68,9 @@ class MergePeople(Bolt):
 
     def process(self, tup):
         if tup.stream == "image_obj":
-            # self.log("got to MergePeople from image_obj-stream")
             image_dict, image_id = tup.values
             self.bucket[image_id] = {'person_stack': 0, 'image_obj': image_dict}
         else:
-            # self.log("got to MergePeople from MergeItems bolt")
             person, image_id = tup.values
             self.bucket[image_id]['image_obj']['people'].append(person)
             self.bucket[image_id]['person_stack'] += 1
@@ -89,4 +85,3 @@ class MergePeople(Bolt):
                     db.iip.delete_one({'image_url': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
-                return
