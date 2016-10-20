@@ -79,7 +79,7 @@ class MergePeople(Bolt):
             if self.bucket[image_id]['person_stack'] == self.bucket[image_id]['image_obj']['num_of_people']:
                 image_obj = self.bucket[image_id]['image_obj']
                 image_obj['saved_date'] = datetime.datetime.strptime(image_obj['saved_date'], "%Y-%m-%d %H:%M:%S.%f")
-                if not db.images.find_one({'image_urls': image_obj['image_urls'][0]}):
+                if not db.images.find_one({'image_urls': image_obj['image_urls'][0]}, {'_id': 1}):
                     db.images.insert_one(image_obj)
                 db.iip.delete_one({'image_urls': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
