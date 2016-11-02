@@ -29,7 +29,7 @@
           "bolts.person.PersonBolt"
           {"item_args" ["item" "person_id"]
            "person_obj" ["person_obj", "person_id", "image_id"]}
-	      :p 10
+	      :p 5
           )
 
     "item-bolt" (python-bolt-spec
