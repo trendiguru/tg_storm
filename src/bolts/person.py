@@ -4,6 +4,7 @@ from streamparse.bolt import Bolt
 import bson
 import numpy as np
 import time
+import traceback
 from trendi import constants
 from trendi import whitelist, page_results, Utils, background_removal, pipeline, constants
 from trendi.paperdoll import pd_falcon_client, neurodoll_falcon_client
@@ -32,8 +33,8 @@ class PersonBolt(Bolt):
 
             else:
                 seg_res = neurodoll_falcon_client.pd(image)
-        except Exception as e:
-            self.log(e)
+        except Exception:
+            self.log(traceback.format_exc())
             return
 
         self.log("{0} took {1} seconds..".format(person['segmentation_method'], time.time() - start))
