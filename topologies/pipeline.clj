@@ -10,7 +10,7 @@
           options
           "spouts.new_images.NewImageSpout"
           ["page_url", "image_url", "products", "method"]
-          :p 2
+          :p 1
           )
     }
     {
