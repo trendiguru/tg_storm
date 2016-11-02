@@ -15,7 +15,7 @@ class NewImageSpout(Spout):
         self.db = db
 
     def next_tuple(self):
-        time.sleep(10)
+        time.sleep(0.5)
         job = self.q.dequeue()
         if not job:
             return
