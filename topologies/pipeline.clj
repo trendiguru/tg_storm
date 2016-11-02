@@ -10,7 +10,7 @@
           options
           "spouts.new_images.NewImageSpout"
           ["page_url", "image_url", "products", "method"]
-          :p 2
+          :p 1
           )
     }
 
@@ -30,7 +30,7 @@
           "bolts.person.PersonBolt"
           {"item_args" ["item" "person_id"]
            "person_obj" ["person_obj", "person_id", "image_id"]}
-	      :p 10
+	      :p 2
           )
 
     "item-bolt" (python-bolt-spec
@@ -47,7 +47,7 @@
             "item-bolt" ["person_id"]}
           "bolts.person.MergeItems"
           ["person", "image_id"]
-          :p 2
+          :p 1
           )
 
     "merge-people-bolt" (python-bolt-spec
@@ -56,7 +56,7 @@
             "merge-items-bolt" ["image_id"]}
           "bolts.image.MergePeople"
           []
-          :p 2
+          :p 1
           )
     }
   ]
