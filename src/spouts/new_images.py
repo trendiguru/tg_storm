@@ -28,4 +28,5 @@ class NewImageSpout(Spout):
         self.log("OMG {0} FAILED {1} been deleted from db.iip".format(tup_id, var))
 
     def ack(self, tup_id):
+        db.iip.delete_one({'image_urls': tup_id})
         self.log("HEYYY!.. {0} ACKNOWLEGED".format(tup_id))
