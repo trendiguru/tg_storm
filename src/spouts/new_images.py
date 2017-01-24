@@ -17,7 +17,7 @@ class NewImageSpout(Spout):
 
     def next_tuple(self):
         f0 = inspect.currentframe()
-        print f0.f_back.f_code.co_filename, f0.f_lineno, f0.f_back.f_lineno
+        print "{0}{1}{2}".format(f0.f_back.f_code.co_filename, f0.f_lineno, f0.f_back.f_lineno)
         time.sleep(0.5)
         job = self.q.dequeue()
         print "Job:" + str(job)
