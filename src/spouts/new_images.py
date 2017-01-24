@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+import inspect
 from streamparse.spout import Spout
 import rq, time
 from trendi.constants import redis_conn, db
@@ -15,8 +16,11 @@ class NewImageSpout(Spout):
         self.db = db
 
     def next_tuple(self):
+        f0 = inspect.currentframe()
+        print f0.f_back.f_code.co_filename, f0.f_lineno, f0.f_back.f_lineno
         time.sleep(0.5)
         job = self.q.dequeue()
+        print "Job:" + str(job)
         if not job:
             return
         page_url, image_url, products, method = job.args
