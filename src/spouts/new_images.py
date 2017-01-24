@@ -20,7 +20,7 @@ class NewImageSpout(Spout):
         print("{0}, {1}, {2}".format(f0.f_back.f_code.co_filename, f0.f_lineno, f0.f_back.f_lineno))
         time.sleep(0.5)
         job = self.q.dequeue()
-        print "Job:" + str(job)
+        print("Job:" + str(job))
         if not job:
             return
         page_url, image_url, products, method = job.args
