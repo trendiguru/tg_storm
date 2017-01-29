@@ -5,11 +5,14 @@ import tldextract
 import datetime
 import bson
 import time
-from trendi.constants import db
+import rq
+from trendi.constants import db, redis_conn
 from trendi import whitelist, page_results, Utils, background_removal
+from trendi import new_image_notifier
+
 GENDERATOR_PATH = 'http://extremeli.trendi.guru/demo/genderator'
 YONATANS_PATH = 'http://extremeli.trendi.guru/demo/yonatan_gender'
-
+notification_q = rq.Queue('new_image_notifications', connection=redis_conn)
 
 class NewImageBolt(Bolt):
 
@@ -85,3 +88,4 @@ class MergePeople(Bolt):
                     db.iip.delete_one({'image_url': image_obj['image_urls'][0]})
                 self.log("Done! all people for image {0} arrived, Inserting! :)".format(image_id))
                 del self.bucket[image_id]
+                notification_q.enqueue(new_image_notifier.notify_new_image, {'image_id':image_id})
