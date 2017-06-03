@@ -15,6 +15,7 @@ class PersonBolt(Bolt):
         self.db = constants.db
 
     def process(self, tup):
+        self.log("Reached {} with tup: {}".format(self.__class__.__name__, tup.values[0]))
         image_id = tup.values[0].pop('image_id')
         image = np.array(tup.values[0].pop('image'), dtype=np.uint8)
         person = tup.values[0]
