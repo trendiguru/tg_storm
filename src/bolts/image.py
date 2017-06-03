@@ -17,6 +17,7 @@ class NewImageBolt(Bolt):
         self.db = db
 
     def process(self, tup):
+        self.log("Reached {} with tup: {}".format(self.__class__.__name__, tup.values))
         page_url, image_url, products, method = tup.values
 
         domain = tldextract.extract(page_url).registered_domain
@@ -66,6 +67,7 @@ class MergePeople(Bolt):
         self.bucket = {}
 
     def process(self, tup):
+        self.log("Reached {} with tup: {}".format(self.__class__.__name__, tup.values))
         if tup.stream == "image_obj":
             image_dict, image_id = tup.values
             self.bucket[image_id] = {'person_stack': 0, 'image_obj': image_dict}
