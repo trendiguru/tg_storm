@@ -13,6 +13,7 @@ class ItemBolt(Bolt):
         self.db = db
 
     def process(self, tup):
+        self.log("Reached {} with tup: {}".format(self.__class__.__name__, tup.values))
         item, person_id = tup.values
         item['mask'] = np.array(item['mask'], dtype=np.uint8)
         item['image'] = np.array(item['image'], dtype=np.uint8)
