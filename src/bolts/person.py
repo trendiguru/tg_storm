@@ -1,3 +1,4 @@
+import traceback
 from __future__ import absolute_import, print_function, unicode_literals
 from streamparse.bolt import Bolt
 from pystorm import Tuple
@@ -42,27 +43,30 @@ class PersonBolt(Bolt):
             labels = seg_res['label_dict']
         else:
             return
-        final_mask = pipeline.after_nn_conclusions(mask, labels, person['face'])
-        idx = 0
-        items = []
-        for num in np.unique(final_mask):
-            pd_category = list(labels.keys())[list(labels.values()).index(num)]
-            if pd_category in constants.paperdoll_relevant_categories:
-                item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
-                if person['gender'] == 'Male':
-                    category = constants.paperdoll_paperdoll_men[pd_category]
-                else:
-                    category = pd_category
-                item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist(),
-                             'domain': person['domain'], 'gender': person['gender'],
-                             'products_collection': person['products_collection']}
-                items.append(item_args)
-                idx += 1
-        person['num_of_items'] = idx
-        person.pop('domain')
-        self.emit([person, person['_id'], image_id], stream='person_obj')
-        for item in items:
-            self.emit([item, person['_id']], stream='item_args')
+        # final_mask = pipeline.after_nn_conclusions(mask, labels, person['face'])
+        try:
+            idx = 0
+            items = []
+            for num in np.unique(final_mask):
+                pd_category = list(labels.keys())[list(labels.values()).index(num)]
+                if pd_category in constants.paperdoll_relevant_categories:
+                    item_mask = 255 * np.array(final_mask == num, dtype=np.uint8)
+                    if person['gender'] == 'Male':
+                        category = constants.paperdoll_paperdoll_men[pd_category]
+                    else:
+                        category = pd_category
+                    item_args = {'mask': item_mask.tolist(), 'category': category, 'image': image.tolist(),
+                                 'domain': person['domain'], 'gender': person['gender'],
+                                 'products_collection': person['products_collection']}
+                    items.append(item_args)
+                    idx += 1
+            person['num_of_items'] = idx
+            person.pop('domain')
+            self.emit([person, person['_id'], image_id], stream='person_obj')
+            for item in items:
+                self.emit([item, person['_id']], stream='item_args')
+        except:
+            self.log(traceback.format_exc())
 
 
 class MergeItems(Bolt):
