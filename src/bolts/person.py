@@ -1,5 +1,5 @@
-import traceback
 from __future__ import absolute_import, print_function, unicode_literals
+import traceback
 from streamparse.bolt import Bolt
 from pystorm import Tuple
 import bson
