@@ -6,7 +6,8 @@ import numpy as np
 import time
 from trendi import constants
 from trendi import whitelist, page_results, Utils, background_removal, pipeline, constants
-from trendi.paperdoll import pd_falcon_client, neurodoll_falcon_client
+from trendi.paperdoll import pd_falcon_client
+from trendi.paperdoll import neurodoll_falcon_client as nd_client
 
 
 class PersonBolt(Bolt):
@@ -15,7 +16,7 @@ class PersonBolt(Bolt):
         self.db = constants.db
 
     def process(self, tup):
-        self.log("Reached {} with tup: {}".format(self.__class__.__name__, tup.values))
+        # self.log("Reached {} with tup: {}".format(self.__class__.__name__, tup.values))
         image_id = tup.values[0].pop('image_id')
         image = np.array(tup.values[0].pop('image'), dtype=np.uint8)
         person = tup.values[0]
@@ -28,18 +29,17 @@ class PersonBolt(Bolt):
                 seg_res = pd_falcon_client.pd(image)
 
             else:
-                seg_res = neurodoll_falcon_client.pd(image)
+                self.log("Sending to ND")
+                seg_res = nd_client.nd(image, get_combined_results=True)
+                # seg_res = neurodoll_falcon_client.pd(image)
         except Exception as e:
             self.log(e)
             return
         self.log("{0} took {1} seconds..".format(person['segmentation_method'], time.time() - start))
 
-        if 'success' in seg_res and seg_res['success']:
-            mask = seg_res['mask']
-            if person['segmentation_method'] == 'pd':
-                labels = seg_res['label_dict']
-            else:
-                labels = constants.ultimate_21_dict
+        if seg_res.get('success'):
+            mask = seg_res['mask']  
+            labels = seg_res['label_dict']
         else:
             return
         final_mask = pipeline.after_nn_conclusions(mask, labels, person['face'])
@@ -71,7 +71,7 @@ class MergeItems(Bolt):
         self.bucket = {}
 
     def process(self, tup):
-        self.log("Reached {} with tup: {}".format(self.__class__.__name__, tup.values))
+        # self.log("Reached {} with tup: {}".format(self.__class__.__name__, tup.values))
         if tup.stream == "person_obj":
             person_obj, person_id, image_id = tup.values
             self.bucket[person_id] = {'image_id': image_id, 'item_stack': 0, 'person_obj': person_obj}
